@@ -14,11 +14,16 @@ import com.app.fusionarpdfs.data.repository.PdfFileRepositoryImpl;
 import com.app.fusionarpdfs.di.AppModule_ProvideContentResolverFactory;
 import com.app.fusionarpdfs.domain.usecase.AddPdfsFromUrisUseCase;
 import com.app.fusionarpdfs.domain.usecase.ClearPdfSelectionUseCase;
+import com.app.fusionarpdfs.domain.usecase.PersistOutputUriPermissionUseCase;
 import com.app.fusionarpdfs.domain.usecase.RemoveSelectedPdfUseCase;
+import com.app.fusionarpdfs.domain.usecase.SaveMergeConfigurationUseCase;
 import com.app.fusionarpdfs.domain.usecase.UpdatePdfOrderUseCase;
+import com.app.fusionarpdfs.domain.usecase.ValidateMergeConfigurationUseCase;
 import com.app.fusionarpdfs.domain.usecase.ValidatePdfSelectionUseCase;
 import com.app.fusionarpdfs.presentation.home.HomeViewModel;
 import com.app.fusionarpdfs.presentation.home.HomeViewModel_HiltModules;
+import com.app.fusionarpdfs.presentation.preview.PreviewViewModel;
+import com.app.fusionarpdfs.presentation.preview.PreviewViewModel_HiltModules;
 import com.app.fusionarpdfs.presentation.reorder.ReorderViewModel;
 import com.app.fusionarpdfs.presentation.reorder.ReorderViewModel_HiltModules;
 import dagger.hilt.android.ActivityRetainedLifecycle;
@@ -382,7 +387,7 @@ public final class DaggerFusionarPdfsApplication_HiltComponents_SingletonC {
 
     @Override
     public Map<Class<?>, Boolean> getViewModelKeys() {
-      return LazyClassKeyMap.<Boolean>of(MapBuilder.<String, Boolean>newMapBuilder(2).put(LazyClassKeyProvider.com_app_fusionarpdfs_presentation_home_HomeViewModel, HomeViewModel_HiltModules.KeyModule.provide()).put(LazyClassKeyProvider.com_app_fusionarpdfs_presentation_reorder_ReorderViewModel, ReorderViewModel_HiltModules.KeyModule.provide()).build());
+      return LazyClassKeyMap.<Boolean>of(MapBuilder.<String, Boolean>newMapBuilder(3).put(LazyClassKeyProvider.com_app_fusionarpdfs_presentation_home_HomeViewModel, HomeViewModel_HiltModules.KeyModule.provide()).put(LazyClassKeyProvider.com_app_fusionarpdfs_presentation_preview_PreviewViewModel, PreviewViewModel_HiltModules.KeyModule.provide()).put(LazyClassKeyProvider.com_app_fusionarpdfs_presentation_reorder_ReorderViewModel, ReorderViewModel_HiltModules.KeyModule.provide()).build());
     }
 
     @Override
@@ -402,15 +407,20 @@ public final class DaggerFusionarPdfsApplication_HiltComponents_SingletonC {
 
     @IdentifierNameString
     private static final class LazyClassKeyProvider {
-      static String com_app_fusionarpdfs_presentation_home_HomeViewModel = "com.app.fusionarpdfs.presentation.home.HomeViewModel";
+      static String com_app_fusionarpdfs_presentation_preview_PreviewViewModel = "com.app.fusionarpdfs.presentation.preview.PreviewViewModel";
 
       static String com_app_fusionarpdfs_presentation_reorder_ReorderViewModel = "com.app.fusionarpdfs.presentation.reorder.ReorderViewModel";
 
+      static String com_app_fusionarpdfs_presentation_home_HomeViewModel = "com.app.fusionarpdfs.presentation.home.HomeViewModel";
+
       @KeepFieldType
-      HomeViewModel com_app_fusionarpdfs_presentation_home_HomeViewModel2;
+      PreviewViewModel com_app_fusionarpdfs_presentation_preview_PreviewViewModel2;
 
       @KeepFieldType
       ReorderViewModel com_app_fusionarpdfs_presentation_reorder_ReorderViewModel2;
+
+      @KeepFieldType
+      HomeViewModel com_app_fusionarpdfs_presentation_home_HomeViewModel2;
     }
   }
 
@@ -422,6 +432,8 @@ public final class DaggerFusionarPdfsApplication_HiltComponents_SingletonC {
     private final ViewModelCImpl viewModelCImpl = this;
 
     private Provider<HomeViewModel> homeViewModelProvider;
+
+    private Provider<PreviewViewModel> previewViewModelProvider;
 
     private Provider<ReorderViewModel> reorderViewModelProvider;
 
@@ -447,6 +459,18 @@ public final class DaggerFusionarPdfsApplication_HiltComponents_SingletonC {
       return new ClearPdfSelectionUseCase(singletonCImpl.mergeSessionRepositoryImplProvider.get(), singletonCImpl.pdfFileRepositoryImplProvider.get());
     }
 
+    private ValidateMergeConfigurationUseCase validateMergeConfigurationUseCase() {
+      return new ValidateMergeConfigurationUseCase(new ValidatePdfSelectionUseCase());
+    }
+
+    private SaveMergeConfigurationUseCase saveMergeConfigurationUseCase() {
+      return new SaveMergeConfigurationUseCase(singletonCImpl.mergeSessionRepositoryImplProvider.get());
+    }
+
+    private PersistOutputUriPermissionUseCase persistOutputUriPermissionUseCase() {
+      return new PersistOutputUriPermissionUseCase(singletonCImpl.pdfFileRepositoryImplProvider.get());
+    }
+
     private UpdatePdfOrderUseCase updatePdfOrderUseCase() {
       return new UpdatePdfOrderUseCase(singletonCImpl.mergeSessionRepositoryImplProvider.get());
     }
@@ -455,12 +479,13 @@ public final class DaggerFusionarPdfsApplication_HiltComponents_SingletonC {
     private void initialize(final SavedStateHandle savedStateHandleParam,
         final ViewModelLifecycle viewModelLifecycleParam) {
       this.homeViewModelProvider = new SwitchingProvider<>(singletonCImpl, activityRetainedCImpl, viewModelCImpl, 0);
-      this.reorderViewModelProvider = new SwitchingProvider<>(singletonCImpl, activityRetainedCImpl, viewModelCImpl, 1);
+      this.previewViewModelProvider = new SwitchingProvider<>(singletonCImpl, activityRetainedCImpl, viewModelCImpl, 1);
+      this.reorderViewModelProvider = new SwitchingProvider<>(singletonCImpl, activityRetainedCImpl, viewModelCImpl, 2);
     }
 
     @Override
     public Map<Class<?>, javax.inject.Provider<ViewModel>> getHiltViewModelMap() {
-      return LazyClassKeyMap.<javax.inject.Provider<ViewModel>>of(MapBuilder.<String, javax.inject.Provider<ViewModel>>newMapBuilder(2).put(LazyClassKeyProvider.com_app_fusionarpdfs_presentation_home_HomeViewModel, ((Provider) homeViewModelProvider)).put(LazyClassKeyProvider.com_app_fusionarpdfs_presentation_reorder_ReorderViewModel, ((Provider) reorderViewModelProvider)).build());
+      return LazyClassKeyMap.<javax.inject.Provider<ViewModel>>of(MapBuilder.<String, javax.inject.Provider<ViewModel>>newMapBuilder(3).put(LazyClassKeyProvider.com_app_fusionarpdfs_presentation_home_HomeViewModel, ((Provider) homeViewModelProvider)).put(LazyClassKeyProvider.com_app_fusionarpdfs_presentation_preview_PreviewViewModel, ((Provider) previewViewModelProvider)).put(LazyClassKeyProvider.com_app_fusionarpdfs_presentation_reorder_ReorderViewModel, ((Provider) reorderViewModelProvider)).build());
     }
 
     @Override
@@ -470,15 +495,20 @@ public final class DaggerFusionarPdfsApplication_HiltComponents_SingletonC {
 
     @IdentifierNameString
     private static final class LazyClassKeyProvider {
+      static String com_app_fusionarpdfs_presentation_reorder_ReorderViewModel = "com.app.fusionarpdfs.presentation.reorder.ReorderViewModel";
+
       static String com_app_fusionarpdfs_presentation_home_HomeViewModel = "com.app.fusionarpdfs.presentation.home.HomeViewModel";
 
-      static String com_app_fusionarpdfs_presentation_reorder_ReorderViewModel = "com.app.fusionarpdfs.presentation.reorder.ReorderViewModel";
+      static String com_app_fusionarpdfs_presentation_preview_PreviewViewModel = "com.app.fusionarpdfs.presentation.preview.PreviewViewModel";
+
+      @KeepFieldType
+      ReorderViewModel com_app_fusionarpdfs_presentation_reorder_ReorderViewModel2;
 
       @KeepFieldType
       HomeViewModel com_app_fusionarpdfs_presentation_home_HomeViewModel2;
 
       @KeepFieldType
-      ReorderViewModel com_app_fusionarpdfs_presentation_reorder_ReorderViewModel2;
+      PreviewViewModel com_app_fusionarpdfs_presentation_preview_PreviewViewModel2;
     }
 
     private static final class SwitchingProvider<T> implements Provider<T> {
@@ -505,7 +535,10 @@ public final class DaggerFusionarPdfsApplication_HiltComponents_SingletonC {
           case 0: // com.app.fusionarpdfs.presentation.home.HomeViewModel 
           return (T) new HomeViewModel(singletonCImpl.mergeSessionRepositoryImplProvider.get(), viewModelCImpl.addPdfsFromUrisUseCase(), viewModelCImpl.removeSelectedPdfUseCase(), viewModelCImpl.clearPdfSelectionUseCase(), new ValidatePdfSelectionUseCase());
 
-          case 1: // com.app.fusionarpdfs.presentation.reorder.ReorderViewModel 
+          case 1: // com.app.fusionarpdfs.presentation.preview.PreviewViewModel 
+          return (T) new PreviewViewModel(singletonCImpl.mergeSessionRepositoryImplProvider.get(), viewModelCImpl.validateMergeConfigurationUseCase(), viewModelCImpl.saveMergeConfigurationUseCase(), viewModelCImpl.persistOutputUriPermissionUseCase());
+
+          case 2: // com.app.fusionarpdfs.presentation.reorder.ReorderViewModel 
           return (T) new ReorderViewModel(singletonCImpl.mergeSessionRepositoryImplProvider.get(), viewModelCImpl.updatePdfOrderUseCase(), viewModelCImpl.removeSelectedPdfUseCase(), new ValidatePdfSelectionUseCase());
 
           default: throw new AssertionError(id);
@@ -614,7 +647,7 @@ public final class DaggerFusionarPdfsApplication_HiltComponents_SingletonC {
     }
 
     @Override
-    public void injectFusionarPdfsApplication(FusionarPdfsApplication arg0) {
+    public void injectFusionarPdfsApplication(FusionarPdfsApplication fusionarPdfsApplication) {
     }
 
     @Override

@@ -27,6 +27,10 @@ class PdfFileRepositoryImpl @Inject constructor(
         uriPermissionDataSource.releaseReadPermission(uri)
     }
 
+    override fun persistOutputUriPermission(uri: Uri) {
+        uriPermissionDataSource.persistWritePermission(uri)
+    }
+
     override suspend fun resolvePdfMetadata(uri: Uri, order: Int): Result<PdfFileItem> {
         return withContext(Dispatchers.IO) {
             validatePdfAccessible(uri).map {

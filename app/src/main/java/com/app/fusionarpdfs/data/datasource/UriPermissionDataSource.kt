@@ -33,6 +33,16 @@ class UriPermissionDataSource @Inject constructor(
         }
     }
 
+    fun persistWritePermission(uri: Uri) {
+        try {
+            contentResolver.takePersistableUriPermission(
+                uri,
+                Intent.FLAG_GRANT_WRITE_URI_PERMISSION,
+            )
+        } catch (_: SecurityException) {
+        }
+    }
+
     fun hasPersistedReadPermission(uri: Uri): Boolean {
         return contentResolver.persistedUriPermissions.any { permission ->
             permission.uri == uri && permission.isReadPermission
