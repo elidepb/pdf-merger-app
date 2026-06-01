@@ -21,7 +21,7 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun HistoryScreen(
     onNavigateBack: () -> Unit,
-    onNavigateToResult: () -> Unit,
+    onNavigateToResult: (historyItemId: String) -> Unit,
 ) {
     Scaffold(
         topBar = {

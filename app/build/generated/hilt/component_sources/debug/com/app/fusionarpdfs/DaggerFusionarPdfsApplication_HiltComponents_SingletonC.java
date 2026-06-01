@@ -491,7 +491,7 @@ public final class DaggerFusionarPdfsApplication_HiltComponents_SingletonC {
     }
 
     @Override
-    public void injectFusionarPdfsApplication(FusionarPdfsApplication arg0) {
+    public void injectFusionarPdfsApplication(FusionarPdfsApplication fusionarPdfsApplication) {
     }
 
     @Override
