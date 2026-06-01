@@ -2,10 +2,22 @@ package com.app.fusionarpdfs;
 
 import android.app.Activity;
 import android.app.Service;
+import android.content.ContentResolver;
 import android.view.View;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.SavedStateHandle;
 import androidx.lifecycle.ViewModel;
+import com.app.fusionarpdfs.data.datasource.PdfContentDataSource;
+import com.app.fusionarpdfs.data.datasource.UriPermissionDataSource;
+import com.app.fusionarpdfs.data.repository.MergeSessionRepositoryImpl;
+import com.app.fusionarpdfs.data.repository.PdfFileRepositoryImpl;
+import com.app.fusionarpdfs.di.AppModule_ProvideContentResolverFactory;
+import com.app.fusionarpdfs.domain.usecase.AddPdfsFromUrisUseCase;
+import com.app.fusionarpdfs.domain.usecase.ClearPdfSelectionUseCase;
+import com.app.fusionarpdfs.domain.usecase.RemoveSelectedPdfUseCase;
+import com.app.fusionarpdfs.domain.usecase.ValidatePdfSelectionUseCase;
+import com.app.fusionarpdfs.presentation.home.HomeViewModel;
+import com.app.fusionarpdfs.presentation.home.HomeViewModel_HiltModules;
 import dagger.hilt.android.ActivityRetainedLifecycle;
 import dagger.hilt.android.ViewModelLifecycle;
 import dagger.hilt.android.internal.builders.ActivityComponentBuilder;
@@ -20,14 +32,18 @@ import dagger.hilt.android.internal.lifecycle.DefaultViewModelFactories_Internal
 import dagger.hilt.android.internal.managers.ActivityRetainedComponentManager_LifecycleModule_ProvideActivityRetainedLifecycleFactory;
 import dagger.hilt.android.internal.managers.SavedStateHandleHolder;
 import dagger.hilt.android.internal.modules.ApplicationContextModule;
+import dagger.hilt.android.internal.modules.ApplicationContextModule_ProvideContextFactory;
 import dagger.internal.DaggerGenerated;
 import dagger.internal.DoubleCheck;
+import dagger.internal.IdentifierNameString;
+import dagger.internal.KeepFieldType;
+import dagger.internal.LazyClassKeyMap;
 import dagger.internal.Preconditions;
+import dagger.internal.Provider;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
 import javax.annotation.processing.Generated;
-import javax.inject.Provider;
 
 @DaggerGenerated
 @Generated(
@@ -50,25 +66,20 @@ public final class DaggerFusionarPdfsApplication_HiltComponents_SingletonC {
     return new Builder();
   }
 
-  public static FusionarPdfsApplication_HiltComponents.SingletonC create() {
-    return new Builder().build();
-  }
-
   public static final class Builder {
+    private ApplicationContextModule applicationContextModule;
+
     private Builder() {
     }
 
-    /**
-     * @deprecated This module is declared, but an instance is not used in the component. This method is a no-op. For more, see https://dagger.dev/unused-modules.
-     */
-    @Deprecated
     public Builder applicationContextModule(ApplicationContextModule applicationContextModule) {
-      Preconditions.checkNotNull(applicationContextModule);
+      this.applicationContextModule = Preconditions.checkNotNull(applicationContextModule);
       return this;
     }
 
     public FusionarPdfsApplication_HiltComponents.SingletonC build() {
-      return new SingletonCImpl();
+      Preconditions.checkBuilderRequirement(applicationContextModule, ApplicationContextModule.class);
+      return new SingletonCImpl(applicationContextModule);
     }
   }
 
@@ -362,12 +373,12 @@ public final class DaggerFusionarPdfsApplication_HiltComponents_SingletonC {
 
     @Override
     public DefaultViewModelFactories.InternalFactoryFactory getHiltInternalFactoryFactory() {
-      return DefaultViewModelFactories_InternalFactoryFactory_Factory.newInstance(Collections.<Class<?>, Boolean>emptyMap(), new ViewModelCBuilder(singletonCImpl, activityRetainedCImpl));
+      return DefaultViewModelFactories_InternalFactoryFactory_Factory.newInstance(getViewModelKeys(), new ViewModelCBuilder(singletonCImpl, activityRetainedCImpl));
     }
 
     @Override
     public Map<Class<?>, Boolean> getViewModelKeys() {
-      return Collections.<Class<?>, Boolean>emptyMap();
+      return LazyClassKeyMap.<Boolean>of(Collections.<String, Boolean>singletonMap(LazyClassKeyProvider.com_app_fusionarpdfs_presentation_home_HomeViewModel, HomeViewModel_HiltModules.KeyModule.provide()));
     }
 
     @Override
@@ -384,6 +395,14 @@ public final class DaggerFusionarPdfsApplication_HiltComponents_SingletonC {
     public ViewComponentBuilder viewComponentBuilder() {
       return new ViewCBuilder(singletonCImpl, activityRetainedCImpl, activityCImpl);
     }
+
+    @IdentifierNameString
+    private static final class LazyClassKeyProvider {
+      static String com_app_fusionarpdfs_presentation_home_HomeViewModel = "com.app.fusionarpdfs.presentation.home.HomeViewModel";
+
+      @KeepFieldType
+      HomeViewModel com_app_fusionarpdfs_presentation_home_HomeViewModel2;
+    }
   }
 
   private static final class ViewModelCImpl extends FusionarPdfsApplication_HiltComponents.ViewModelC {
@@ -393,23 +412,81 @@ public final class DaggerFusionarPdfsApplication_HiltComponents_SingletonC {
 
     private final ViewModelCImpl viewModelCImpl = this;
 
+    private Provider<HomeViewModel> homeViewModelProvider;
+
     private ViewModelCImpl(SingletonCImpl singletonCImpl,
         ActivityRetainedCImpl activityRetainedCImpl, SavedStateHandle savedStateHandleParam,
         ViewModelLifecycle viewModelLifecycleParam) {
       this.singletonCImpl = singletonCImpl;
       this.activityRetainedCImpl = activityRetainedCImpl;
 
+      initialize(savedStateHandleParam, viewModelLifecycleParam);
 
     }
 
+    private AddPdfsFromUrisUseCase addPdfsFromUrisUseCase() {
+      return new AddPdfsFromUrisUseCase(singletonCImpl.pdfFileRepositoryImplProvider.get(), singletonCImpl.mergeSessionRepositoryImplProvider.get());
+    }
+
+    private RemoveSelectedPdfUseCase removeSelectedPdfUseCase() {
+      return new RemoveSelectedPdfUseCase(singletonCImpl.mergeSessionRepositoryImplProvider.get(), singletonCImpl.pdfFileRepositoryImplProvider.get());
+    }
+
+    private ClearPdfSelectionUseCase clearPdfSelectionUseCase() {
+      return new ClearPdfSelectionUseCase(singletonCImpl.mergeSessionRepositoryImplProvider.get(), singletonCImpl.pdfFileRepositoryImplProvider.get());
+    }
+
+    @SuppressWarnings("unchecked")
+    private void initialize(final SavedStateHandle savedStateHandleParam,
+        final ViewModelLifecycle viewModelLifecycleParam) {
+      this.homeViewModelProvider = new SwitchingProvider<>(singletonCImpl, activityRetainedCImpl, viewModelCImpl, 0);
+    }
+
     @Override
-    public Map<Class<?>, Provider<ViewModel>> getHiltViewModelMap() {
-      return Collections.<Class<?>, Provider<ViewModel>>emptyMap();
+    public Map<Class<?>, javax.inject.Provider<ViewModel>> getHiltViewModelMap() {
+      return LazyClassKeyMap.<javax.inject.Provider<ViewModel>>of(Collections.<String, javax.inject.Provider<ViewModel>>singletonMap(LazyClassKeyProvider.com_app_fusionarpdfs_presentation_home_HomeViewModel, ((Provider) homeViewModelProvider)));
     }
 
     @Override
     public Map<Class<?>, Object> getHiltViewModelAssistedMap() {
       return Collections.<Class<?>, Object>emptyMap();
+    }
+
+    @IdentifierNameString
+    private static final class LazyClassKeyProvider {
+      static String com_app_fusionarpdfs_presentation_home_HomeViewModel = "com.app.fusionarpdfs.presentation.home.HomeViewModel";
+
+      @KeepFieldType
+      HomeViewModel com_app_fusionarpdfs_presentation_home_HomeViewModel2;
+    }
+
+    private static final class SwitchingProvider<T> implements Provider<T> {
+      private final SingletonCImpl singletonCImpl;
+
+      private final ActivityRetainedCImpl activityRetainedCImpl;
+
+      private final ViewModelCImpl viewModelCImpl;
+
+      private final int id;
+
+      SwitchingProvider(SingletonCImpl singletonCImpl, ActivityRetainedCImpl activityRetainedCImpl,
+          ViewModelCImpl viewModelCImpl, int id) {
+        this.singletonCImpl = singletonCImpl;
+        this.activityRetainedCImpl = activityRetainedCImpl;
+        this.viewModelCImpl = viewModelCImpl;
+        this.id = id;
+      }
+
+      @SuppressWarnings("unchecked")
+      @Override
+      public T get() {
+        switch (id) {
+          case 0: // com.app.fusionarpdfs.presentation.home.HomeViewModel 
+          return (T) new HomeViewModel(singletonCImpl.mergeSessionRepositoryImplProvider.get(), viewModelCImpl.addPdfsFromUrisUseCase(), viewModelCImpl.removeSelectedPdfUseCase(), viewModelCImpl.clearPdfSelectionUseCase(), new ValidatePdfSelectionUseCase());
+
+          default: throw new AssertionError(id);
+        }
+      }
     }
   }
 
@@ -418,7 +495,7 @@ public final class DaggerFusionarPdfsApplication_HiltComponents_SingletonC {
 
     private final ActivityRetainedCImpl activityRetainedCImpl = this;
 
-    private dagger.internal.Provider<ActivityRetainedLifecycle> provideActivityRetainedLifecycleProvider;
+    private Provider<ActivityRetainedLifecycle> provideActivityRetainedLifecycleProvider;
 
     private ActivityRetainedCImpl(SingletonCImpl singletonCImpl,
         SavedStateHandleHolder savedStateHandleHolderParam) {
@@ -443,7 +520,7 @@ public final class DaggerFusionarPdfsApplication_HiltComponents_SingletonC {
       return provideActivityRetainedLifecycleProvider.get();
     }
 
-    private static final class SwitchingProvider<T> implements dagger.internal.Provider<T> {
+    private static final class SwitchingProvider<T> implements Provider<T> {
       private final SingletonCImpl singletonCImpl;
 
       private final ActivityRetainedCImpl activityRetainedCImpl;
@@ -483,11 +560,33 @@ public final class DaggerFusionarPdfsApplication_HiltComponents_SingletonC {
   }
 
   private static final class SingletonCImpl extends FusionarPdfsApplication_HiltComponents.SingletonC {
+    private final ApplicationContextModule applicationContextModule;
+
     private final SingletonCImpl singletonCImpl = this;
 
-    private SingletonCImpl() {
+    private Provider<MergeSessionRepositoryImpl> mergeSessionRepositoryImplProvider;
 
+    private Provider<ContentResolver> provideContentResolverProvider;
 
+    private Provider<PdfContentDataSource> pdfContentDataSourceProvider;
+
+    private Provider<UriPermissionDataSource> uriPermissionDataSourceProvider;
+
+    private Provider<PdfFileRepositoryImpl> pdfFileRepositoryImplProvider;
+
+    private SingletonCImpl(ApplicationContextModule applicationContextModuleParam) {
+      this.applicationContextModule = applicationContextModuleParam;
+      initialize(applicationContextModuleParam);
+
+    }
+
+    @SuppressWarnings("unchecked")
+    private void initialize(final ApplicationContextModule applicationContextModuleParam) {
+      this.mergeSessionRepositoryImplProvider = DoubleCheck.provider(new SwitchingProvider<MergeSessionRepositoryImpl>(singletonCImpl, 0));
+      this.provideContentResolverProvider = DoubleCheck.provider(new SwitchingProvider<ContentResolver>(singletonCImpl, 3));
+      this.pdfContentDataSourceProvider = DoubleCheck.provider(new SwitchingProvider<PdfContentDataSource>(singletonCImpl, 2));
+      this.uriPermissionDataSourceProvider = DoubleCheck.provider(new SwitchingProvider<UriPermissionDataSource>(singletonCImpl, 4));
+      this.pdfFileRepositoryImplProvider = DoubleCheck.provider(new SwitchingProvider<PdfFileRepositoryImpl>(singletonCImpl, 1));
     }
 
     @Override
@@ -507,6 +606,40 @@ public final class DaggerFusionarPdfsApplication_HiltComponents_SingletonC {
     @Override
     public ServiceComponentBuilder serviceComponentBuilder() {
       return new ServiceCBuilder(singletonCImpl);
+    }
+
+    private static final class SwitchingProvider<T> implements Provider<T> {
+      private final SingletonCImpl singletonCImpl;
+
+      private final int id;
+
+      SwitchingProvider(SingletonCImpl singletonCImpl, int id) {
+        this.singletonCImpl = singletonCImpl;
+        this.id = id;
+      }
+
+      @SuppressWarnings("unchecked")
+      @Override
+      public T get() {
+        switch (id) {
+          case 0: // com.app.fusionarpdfs.data.repository.MergeSessionRepositoryImpl 
+          return (T) new MergeSessionRepositoryImpl();
+
+          case 1: // com.app.fusionarpdfs.data.repository.PdfFileRepositoryImpl 
+          return (T) new PdfFileRepositoryImpl(singletonCImpl.pdfContentDataSourceProvider.get(), singletonCImpl.uriPermissionDataSourceProvider.get());
+
+          case 2: // com.app.fusionarpdfs.data.datasource.PdfContentDataSource 
+          return (T) new PdfContentDataSource(singletonCImpl.provideContentResolverProvider.get());
+
+          case 3: // android.content.ContentResolver 
+          return (T) AppModule_ProvideContentResolverFactory.provideContentResolver(ApplicationContextModule_ProvideContextFactory.provideContext(singletonCImpl.applicationContextModule));
+
+          case 4: // com.app.fusionarpdfs.data.datasource.UriPermissionDataSource 
+          return (T) new UriPermissionDataSource(singletonCImpl.provideContentResolverProvider.get());
+
+          default: throw new AssertionError(id);
+        }
+      }
     }
   }
 }
