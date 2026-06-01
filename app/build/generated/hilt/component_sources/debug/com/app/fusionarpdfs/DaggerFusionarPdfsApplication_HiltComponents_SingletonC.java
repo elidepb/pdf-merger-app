@@ -407,20 +407,20 @@ public final class DaggerFusionarPdfsApplication_HiltComponents_SingletonC {
 
     @IdentifierNameString
     private static final class LazyClassKeyProvider {
+      static String com_app_fusionarpdfs_presentation_home_HomeViewModel = "com.app.fusionarpdfs.presentation.home.HomeViewModel";
+
       static String com_app_fusionarpdfs_presentation_preview_PreviewViewModel = "com.app.fusionarpdfs.presentation.preview.PreviewViewModel";
 
       static String com_app_fusionarpdfs_presentation_reorder_ReorderViewModel = "com.app.fusionarpdfs.presentation.reorder.ReorderViewModel";
 
-      static String com_app_fusionarpdfs_presentation_home_HomeViewModel = "com.app.fusionarpdfs.presentation.home.HomeViewModel";
+      @KeepFieldType
+      HomeViewModel com_app_fusionarpdfs_presentation_home_HomeViewModel2;
 
       @KeepFieldType
       PreviewViewModel com_app_fusionarpdfs_presentation_preview_PreviewViewModel2;
 
       @KeepFieldType
       ReorderViewModel com_app_fusionarpdfs_presentation_reorder_ReorderViewModel2;
-
-      @KeepFieldType
-      HomeViewModel com_app_fusionarpdfs_presentation_home_HomeViewModel2;
     }
   }
 
@@ -647,7 +647,7 @@ public final class DaggerFusionarPdfsApplication_HiltComponents_SingletonC {
     }
 
     @Override
-    public void injectFusionarPdfsApplication(FusionarPdfsApplication fusionarPdfsApplication) {
+    public void injectFusionarPdfsApplication(FusionarPdfsApplication arg0) {
     }
 
     @Override
