@@ -2,6 +2,7 @@ package com.app.fusionarpdfs;
 
 import com.app.fusionarpdfs.di.AppModule;
 import com.app.fusionarpdfs.di.RepositoryModule;
+import com.app.fusionarpdfs.presentation.home.HomeViewModel_HiltModules;
 import dagger.Binds;
 import dagger.Component;
 import dagger.Module;
@@ -157,7 +158,8 @@ public final class FusionarPdfsApplication_HiltComponents {
           ActivityCBuilderModule.class,
           ViewModelCBuilderModule.class,
           HiltWrapper_ActivityRetainedComponentManager_LifecycleModule.class,
-          HiltWrapper_SavedStateHandleModule.class
+          HiltWrapper_SavedStateHandleModule.class,
+          HomeViewModel_HiltModules.KeyModule.class
       }
   )
   @ActivityRetainedScoped
@@ -192,7 +194,10 @@ public final class FusionarPdfsApplication_HiltComponents {
   }
 
   @Subcomponent(
-      modules = HiltWrapper_HiltViewModelFactory_ViewModelModule.class
+      modules = {
+          HiltWrapper_HiltViewModelFactory_ViewModelModule.class,
+          HomeViewModel_HiltModules.BindsModule.class
+      }
   )
   @ViewModelScoped
   public abstract static class ViewModelC implements ViewModelComponent,

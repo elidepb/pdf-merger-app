@@ -8,7 +8,7 @@ import androidx.compose.runtime.remember
 import com.app.fusionarpdfs.core.constants.MimeTypes
 
 class PdfDocumentPickerState(
-    val launch: () -> Unit,
+    val openPicker: () -> Unit,
 )
 
 @Composable
@@ -25,7 +25,7 @@ fun rememberPdfDocumentPicker(
 
     return remember(launcher) {
         PdfDocumentPickerState(
-            launch = { launcher.launch(arrayOf(MimeTypes.PDF)) },
+            openPicker = { launcher.launch(arrayOf(MimeTypes.PDF)) },
         )
     }
 }
