@@ -18,6 +18,8 @@ interface MergeSessionRepository {
 
     fun clearSelection()
 
+    fun addPdfs(pdfs: List<PdfFileItem>)
+
     fun setMergeConfiguration(configuration: MergeConfiguration)
 
     fun clearSession()
