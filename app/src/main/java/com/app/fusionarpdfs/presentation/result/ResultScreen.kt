@@ -22,6 +22,7 @@ import androidx.compose.ui.unit.dp
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ResultScreen(
+    historyItemId: String? = null,
     onNavigateToHome: () -> Unit,
     onNavigateToHistory: () -> Unit,
 ) {
@@ -44,7 +45,11 @@ fun ResultScreen(
                 tint = MaterialTheme.colorScheme.secondary,
             )
             Text(
-                text = "PDF fusionado correctamente",
+                text = if (historyItemId != null) {
+                    "PDF del historial ($historyItemId)"
+                } else {
+                    "PDF fusionado correctamente"
+                },
                 style = MaterialTheme.typography.headlineMedium,
                 modifier = Modifier.padding(top = 16.dp),
             )

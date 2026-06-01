@@ -1,6 +1,7 @@
 package com.app.fusionarpdfs;
 
 import com.app.fusionarpdfs.di.AppModule;
+import com.app.fusionarpdfs.di.RepositoryModule;
 import dagger.Binds;
 import dagger.Component;
 import dagger.Module;
@@ -129,7 +130,8 @@ public final class FusionarPdfsApplication_HiltComponents {
           ApplicationContextModule.class,
           ActivityRetainedCBuilderModule.class,
           ServiceCBuilderModule.class,
-          HiltWrapper_FragmentGetContextFix_FragmentGetContextFixModule.class
+          HiltWrapper_FragmentGetContextFix_FragmentGetContextFixModule.class,
+          RepositoryModule.class
       }
   )
   @Singleton

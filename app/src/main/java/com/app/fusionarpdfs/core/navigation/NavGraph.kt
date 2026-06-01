@@ -2,9 +2,11 @@ package com.app.fusionarpdfs.core.navigation
 
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.app.fusionarpdfs.presentation.history.HistoryScreen
 import com.app.fusionarpdfs.presentation.home.HomeScreen
 import com.app.fusionarpdfs.presentation.preview.PreviewScreen
@@ -23,58 +25,62 @@ fun FusionarPdfsNavGraph(
     ) {
         composable(Route.Home.path) {
             HomeScreen(
-                onNavigateToReorder = { navController.navigate(Route.Reorder.path) },
-                onNavigateToHistory = { navController.navigate(Route.History.path) },
-                onNavigateToSettings = { navController.navigate(Route.Settings.path) },
+                onNavigateToReorder = { navController.navigateToReorder() },
+                onNavigateToHistory = { navController.navigateToHistory() },
+                onNavigateToSettings = { navController.navigateToSettings() },
             )
         }
 
         composable(Route.Reorder.path) {
             ReorderScreen(
-                onNavigateBack = { navController.popBackStack() },
-                onNavigateToPreview = { navController.navigate(Route.Preview.path) },
+                onNavigateBack = { navController.navigateBack() },
+                onNavigateToPreview = { navController.navigateToPreview() },
             )
         }
 
         composable(Route.Preview.path) {
             PreviewScreen(
-                onNavigateBack = { navController.popBackStack() },
-                onNavigateToProgress = { navController.navigate(Route.Progress.path) },
+                onNavigateBack = { navController.navigateBack() },
+                onNavigateToProgress = { navController.navigateToProgress() },
             )
         }
 
         composable(Route.Progress.path) {
             ProgressScreen(
-                onNavigateToResult = {
-                    navController.navigate(Route.Result.path) {
-                        popUpTo(Route.Home.path) { inclusive = false }
-                    }
-                },
+                onNavigateToResult = { navController.navigateToResult() },
             )
         }
 
-        composable(Route.Result.path) {
-            ResultScreen(
-                onNavigateToHome = {
-                    navController.navigate(Route.Home.path) {
-                        popUpTo(Route.Home.path) { inclusive = true }
-                        launchSingleTop = true
-                    }
+        composable(
+            route = resultRoutePattern,
+            arguments = listOf(
+                navArgument(NavArgs.HISTORY_ITEM_ID) {
+                    type = NavType.StringType
+                    nullable = true
+                    defaultValue = null
                 },
-                onNavigateToHistory = { navController.navigate(Route.History.path) },
+            ),
+        ) { backStackEntry ->
+            val historyItemId = backStackEntry.arguments?.getString(NavArgs.HISTORY_ITEM_ID)
+            ResultScreen(
+                historyItemId = historyItemId,
+                onNavigateToHome = { navController.navigateToHome(clearBackStack = true) },
+                onNavigateToHistory = { navController.navigateToHistory() },
             )
         }
 
         composable(Route.History.path) {
             HistoryScreen(
-                onNavigateBack = { navController.popBackStack() },
-                onNavigateToResult = { navController.navigate(Route.Result.path) },
+                onNavigateBack = { navController.navigateBack() },
+                onNavigateToResult = { historyItemId ->
+                    navController.navigateToResult(historyItemId = historyItemId)
+                },
             )
         }
 
         composable(Route.Settings.path) {
             SettingsScreen(
-                onNavigateBack = { navController.popBackStack() },
+                onNavigateBack = { navController.navigateBack() },
             )
         }
     }
