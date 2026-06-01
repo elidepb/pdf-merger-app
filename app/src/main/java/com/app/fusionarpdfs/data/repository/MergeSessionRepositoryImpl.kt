@@ -41,6 +41,18 @@ class MergeSessionRepositoryImpl @Inject constructor() : MergeSessionRepository 
         _selectedPdfs.value = emptyList()
     }
 
+    override fun addPdfs(pdfs: List<PdfFileItem>) {
+        if (pdfs.isEmpty()) return
+
+        _selectedPdfs.update { current ->
+            val existingUris = current.map { it.uri.toString() }.toSet()
+            val newPdfs = pdfs.filter { it.uri.toString() !in existingUris }
+            (current + newPdfs).mapIndexed { index, pdf ->
+                pdf.copy(order = index)
+            }
+        }
+    }
+
     override fun setMergeConfiguration(configuration: MergeConfiguration) {
         _mergeConfiguration.value = configuration
     }
