@@ -6,6 +6,7 @@ import com.app.fusionarpdfs.presentation.home.HomeViewModel_HiltModules;
 import com.app.fusionarpdfs.presentation.preview.PreviewViewModel_HiltModules;
 import com.app.fusionarpdfs.presentation.progress.ProgressViewModel_HiltModules;
 import com.app.fusionarpdfs.presentation.reorder.ReorderViewModel_HiltModules;
+import com.app.fusionarpdfs.presentation.result.ResultViewModel_HiltModules;
 import dagger.Binds;
 import dagger.Component;
 import dagger.Module;
@@ -165,7 +166,8 @@ public final class FusionarPdfsApplication_HiltComponents {
           HomeViewModel_HiltModules.KeyModule.class,
           PreviewViewModel_HiltModules.KeyModule.class,
           ProgressViewModel_HiltModules.KeyModule.class,
-          ReorderViewModel_HiltModules.KeyModule.class
+          ReorderViewModel_HiltModules.KeyModule.class,
+          ResultViewModel_HiltModules.KeyModule.class
       }
   )
   @ActivityRetainedScoped
@@ -205,7 +207,8 @@ public final class FusionarPdfsApplication_HiltComponents {
           HomeViewModel_HiltModules.BindsModule.class,
           PreviewViewModel_HiltModules.BindsModule.class,
           ProgressViewModel_HiltModules.BindsModule.class,
-          ReorderViewModel_HiltModules.BindsModule.class
+          ReorderViewModel_HiltModules.BindsModule.class,
+          ResultViewModel_HiltModules.BindsModule.class
       }
   )
   @ViewModelScoped
