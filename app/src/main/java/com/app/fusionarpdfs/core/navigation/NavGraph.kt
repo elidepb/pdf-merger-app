@@ -47,7 +47,10 @@ fun FusionarPdfsNavGraph(
 
         composable(Route.Progress.path) {
             ProgressScreen(
-                onNavigateToResult = { navController.navigateToResult() },
+                onNavigateToResult = { resultId ->
+                    navController.navigateToResult(historyItemId = resultId)
+                },
+                onNavigateBack = { navController.navigateBack() },
             )
         }
 
