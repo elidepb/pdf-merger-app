@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.app.fusionarpdfs.presentation.home.HomeViewModelTest" tests="7" skipped="0" failures="0" errors="0" timestamp="2026-06-02T18:04:20" hostname="ELIDE" time="0.486">
+  <properties/>
+  <testcase name="onPdfsSelected_showsSnackbarWhenAllImportsSucceed" classname="com.app.fusionarpdfs.presentation.home.HomeViewModelTest" time="0.281"/>
+  <testcase name="uiState_reflectsSelectedPdfsFromSession" classname="com.app.fusionarpdfs.presentation.home.HomeViewModelTest" time="0.038"/>
+  <testcase name="onUserMessageShown_clearsMessage" classname="com.app.fusionarpdfs.presentation.home.HomeViewModelTest" time="0.025"/>
+  <testcase name="onContinueClick_navigatesWhenSelectionIsValid" classname="com.app.fusionarpdfs.presentation.home.HomeViewModelTest" time="0.026"/>
+  <testcase name="onContinueClick_showsMessageWhenTooFewPdfs" classname="com.app.fusionarpdfs.presentation.home.HomeViewModelTest" time="0.025"/>
+  <testcase name="onClearSelection_setsUserMessage" classname="com.app.fusionarpdfs.presentation.home.HomeViewModelTest" time="0.026"/>
+  <testcase name="onPdfsSelected_showsFailuresDialogWhenSomeImportsFail" classname="com.app.fusionarpdfs.presentation.home.HomeViewModelTest" time="0.063"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.app.fusionarpdfs.domain.usecase.ValidatePdfSelectionUseCaseTest" tests="4" skipped="0" failures="0" errors="0" timestamp="2026-06-02T18:04:19" hostname="ELIDE" time="0.125">
+  <properties/>
+  <testcase name="invoke_returnsDuplicateFilesWhenUrisRepeat" classname="com.app.fusionarpdfs.domain.usecase.ValidatePdfSelectionUseCaseTest" time="0.034"/>
+  <testcase name="invoke_returnsTooFewFilesWhenSelectionIsEmpty" classname="com.app.fusionarpdfs.domain.usecase.ValidatePdfSelectionUseCaseTest" time="0.031"/>
+  <testcase name="invoke_returnsTooFewFilesWhenSelectionHasOnePdf" classname="com.app.fusionarpdfs.domain.usecase.ValidatePdfSelectionUseCaseTest" time="0.035"/>
+  <testcase name="invoke_returnsValidWhenAtLeastTwoUniquePdfs" classname="com.app.fusionarpdfs.domain.usecase.ValidatePdfSelectionUseCaseTest" time="0.025"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>
