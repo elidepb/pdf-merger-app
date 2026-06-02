@@ -11,6 +11,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.CallMerge
 import androidx.compose.material.icons.filled.FolderOpen
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -25,6 +26,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -61,6 +63,41 @@ fun PreviewScreen(
         }
     }
 
+    if (uiState.showMergeConfirmation) {
+        AlertDialog(
+            onDismissRequest = viewModel::onDismissMergeConfirmation,
+            title = { Text("Confirmar fusión") },
+            text = {
+                Text(
+                    "Se fusionarán ${uiState.pdfs.size} archivos en \"${uiState.outputFileName}\". " +
+                        "¿Deseas continuar?",
+                )
+            },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        when (val action = viewModel.onConfirmMerge()) {
+                            PreviewMergeAction.NavigateToProgress -> onNavigateToProgress()
+                            is PreviewMergeAction.ShowMessage -> {
+                                scope.launch {
+                                    snackbarHostState.showSnackbar(action.message)
+                                }
+                            }
+                            PreviewMergeAction.None -> Unit
+                        }
+                    },
+                ) {
+                    Text("Fusionar")
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = viewModel::onDismissMergeConfirmation) {
+                    Text("Cancelar")
+                }
+            },
+        )
+    }
+
     Scaffold(
         topBar = {
             TopAppBar(
@@ -84,6 +121,7 @@ fun PreviewScreen(
                                     snackbarHostState.showSnackbar(action.message)
                                 }
                             }
+                            PreviewMergeAction.None -> Unit
                         }
                     },
                     modifier = Modifier
