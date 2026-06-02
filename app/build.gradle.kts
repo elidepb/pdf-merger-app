@@ -61,6 +61,7 @@ dependencies {
 
     implementation(libs.reorderable)
     implementation(libs.pdfbox.android)
+    implementation(libs.androidx.datastore.preferences)
 
     implementation(libs.hilt.android)
     ksp(libs.hilt.compiler)

@@ -2,6 +2,7 @@ package com.app.fusionarpdfs;
 
 import com.app.fusionarpdfs.di.AppModule;
 import com.app.fusionarpdfs.di.RepositoryModule;
+import com.app.fusionarpdfs.presentation.history.HistoryViewModel_HiltModules;
 import com.app.fusionarpdfs.presentation.home.HomeViewModel_HiltModules;
 import com.app.fusionarpdfs.presentation.preview.PreviewViewModel_HiltModules;
 import com.app.fusionarpdfs.presentation.progress.ProgressViewModel_HiltModules;
@@ -163,6 +164,7 @@ public final class FusionarPdfsApplication_HiltComponents {
           ViewModelCBuilderModule.class,
           HiltWrapper_ActivityRetainedComponentManager_LifecycleModule.class,
           HiltWrapper_SavedStateHandleModule.class,
+          HistoryViewModel_HiltModules.KeyModule.class,
           HomeViewModel_HiltModules.KeyModule.class,
           PreviewViewModel_HiltModules.KeyModule.class,
           ProgressViewModel_HiltModules.KeyModule.class,
@@ -204,6 +206,7 @@ public final class FusionarPdfsApplication_HiltComponents {
   @Subcomponent(
       modules = {
           HiltWrapper_HiltViewModelFactory_ViewModelModule.class,
+          HistoryViewModel_HiltModules.BindsModule.class,
           HomeViewModel_HiltModules.BindsModule.class,
           PreviewViewModel_HiltModules.BindsModule.class,
           ProgressViewModel_HiltModules.BindsModule.class,
