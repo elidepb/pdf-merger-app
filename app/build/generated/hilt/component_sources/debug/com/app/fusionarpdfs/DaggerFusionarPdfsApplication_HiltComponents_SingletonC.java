@@ -11,6 +11,7 @@ import com.app.fusionarpdfs.data.datasource.MergeErrorMapper;
 import com.app.fusionarpdfs.data.datasource.PdfContentDataSource;
 import com.app.fusionarpdfs.data.datasource.PdfMergerDataSource;
 import com.app.fusionarpdfs.data.datasource.UriPermissionDataSource;
+import com.app.fusionarpdfs.data.repository.MergeHistoryRepositoryImpl;
 import com.app.fusionarpdfs.data.repository.MergeSessionRepositoryImpl;
 import com.app.fusionarpdfs.data.repository.PdfFileRepositoryImpl;
 import com.app.fusionarpdfs.data.repository.PdfMergerRepositoryImpl;
@@ -18,10 +19,14 @@ import com.app.fusionarpdfs.di.AppModule_ProvideContentResolverFactory;
 import com.app.fusionarpdfs.domain.usecase.AddPdfsFromUrisUseCase;
 import com.app.fusionarpdfs.domain.usecase.ClearPdfSelectionUseCase;
 import com.app.fusionarpdfs.domain.usecase.ExecuteMergeFromSessionUseCase;
+import com.app.fusionarpdfs.domain.usecase.GetMergeResultUseCase;
 import com.app.fusionarpdfs.domain.usecase.MergePdfUseCase;
+import com.app.fusionarpdfs.domain.usecase.OpenMergedPdfUseCase;
 import com.app.fusionarpdfs.domain.usecase.PersistOutputUriPermissionUseCase;
 import com.app.fusionarpdfs.domain.usecase.RemoveSelectedPdfUseCase;
 import com.app.fusionarpdfs.domain.usecase.SaveMergeConfigurationUseCase;
+import com.app.fusionarpdfs.domain.usecase.ShareMergedPdfUseCase;
+import com.app.fusionarpdfs.domain.usecase.StartNewMergeUseCase;
 import com.app.fusionarpdfs.domain.usecase.UpdatePdfOrderUseCase;
 import com.app.fusionarpdfs.domain.usecase.ValidateMergeConfigurationUseCase;
 import com.app.fusionarpdfs.domain.usecase.ValidatePdfSelectionUseCase;
@@ -33,6 +38,8 @@ import com.app.fusionarpdfs.presentation.progress.ProgressViewModel;
 import com.app.fusionarpdfs.presentation.progress.ProgressViewModel_HiltModules;
 import com.app.fusionarpdfs.presentation.reorder.ReorderViewModel;
 import com.app.fusionarpdfs.presentation.reorder.ReorderViewModel_HiltModules;
+import com.app.fusionarpdfs.presentation.result.ResultViewModel;
+import com.app.fusionarpdfs.presentation.result.ResultViewModel_HiltModules;
 import dagger.hilt.android.ActivityRetainedLifecycle;
 import dagger.hilt.android.ViewModelLifecycle;
 import dagger.hilt.android.internal.builders.ActivityComponentBuilder;
@@ -394,7 +401,7 @@ public final class DaggerFusionarPdfsApplication_HiltComponents_SingletonC {
 
     @Override
     public Map<Class<?>, Boolean> getViewModelKeys() {
-      return LazyClassKeyMap.<Boolean>of(MapBuilder.<String, Boolean>newMapBuilder(4).put(LazyClassKeyProvider.com_app_fusionarpdfs_presentation_home_HomeViewModel, HomeViewModel_HiltModules.KeyModule.provide()).put(LazyClassKeyProvider.com_app_fusionarpdfs_presentation_preview_PreviewViewModel, PreviewViewModel_HiltModules.KeyModule.provide()).put(LazyClassKeyProvider.com_app_fusionarpdfs_presentation_progress_ProgressViewModel, ProgressViewModel_HiltModules.KeyModule.provide()).put(LazyClassKeyProvider.com_app_fusionarpdfs_presentation_reorder_ReorderViewModel, ReorderViewModel_HiltModules.KeyModule.provide()).build());
+      return LazyClassKeyMap.<Boolean>of(MapBuilder.<String, Boolean>newMapBuilder(5).put(LazyClassKeyProvider.com_app_fusionarpdfs_presentation_home_HomeViewModel, HomeViewModel_HiltModules.KeyModule.provide()).put(LazyClassKeyProvider.com_app_fusionarpdfs_presentation_preview_PreviewViewModel, PreviewViewModel_HiltModules.KeyModule.provide()).put(LazyClassKeyProvider.com_app_fusionarpdfs_presentation_progress_ProgressViewModel, ProgressViewModel_HiltModules.KeyModule.provide()).put(LazyClassKeyProvider.com_app_fusionarpdfs_presentation_reorder_ReorderViewModel, ReorderViewModel_HiltModules.KeyModule.provide()).put(LazyClassKeyProvider.com_app_fusionarpdfs_presentation_result_ResultViewModel, ResultViewModel_HiltModules.KeyModule.provide()).build());
     }
 
     @Override
@@ -414,29 +421,36 @@ public final class DaggerFusionarPdfsApplication_HiltComponents_SingletonC {
 
     @IdentifierNameString
     private static final class LazyClassKeyProvider {
-      static String com_app_fusionarpdfs_presentation_reorder_ReorderViewModel = "com.app.fusionarpdfs.presentation.reorder.ReorderViewModel";
-
-      static String com_app_fusionarpdfs_presentation_preview_PreviewViewModel = "com.app.fusionarpdfs.presentation.preview.PreviewViewModel";
-
       static String com_app_fusionarpdfs_presentation_home_HomeViewModel = "com.app.fusionarpdfs.presentation.home.HomeViewModel";
+
+      static String com_app_fusionarpdfs_presentation_result_ResultViewModel = "com.app.fusionarpdfs.presentation.result.ResultViewModel";
 
       static String com_app_fusionarpdfs_presentation_progress_ProgressViewModel = "com.app.fusionarpdfs.presentation.progress.ProgressViewModel";
 
-      @KeepFieldType
-      ReorderViewModel com_app_fusionarpdfs_presentation_reorder_ReorderViewModel2;
+      static String com_app_fusionarpdfs_presentation_preview_PreviewViewModel = "com.app.fusionarpdfs.presentation.preview.PreviewViewModel";
 
-      @KeepFieldType
-      PreviewViewModel com_app_fusionarpdfs_presentation_preview_PreviewViewModel2;
+      static String com_app_fusionarpdfs_presentation_reorder_ReorderViewModel = "com.app.fusionarpdfs.presentation.reorder.ReorderViewModel";
 
       @KeepFieldType
       HomeViewModel com_app_fusionarpdfs_presentation_home_HomeViewModel2;
 
       @KeepFieldType
+      ResultViewModel com_app_fusionarpdfs_presentation_result_ResultViewModel2;
+
+      @KeepFieldType
       ProgressViewModel com_app_fusionarpdfs_presentation_progress_ProgressViewModel2;
+
+      @KeepFieldType
+      PreviewViewModel com_app_fusionarpdfs_presentation_preview_PreviewViewModel2;
+
+      @KeepFieldType
+      ReorderViewModel com_app_fusionarpdfs_presentation_reorder_ReorderViewModel2;
     }
   }
 
   private static final class ViewModelCImpl extends FusionarPdfsApplication_HiltComponents.ViewModelC {
+    private final SavedStateHandle savedStateHandle;
+
     private final SingletonCImpl singletonCImpl;
 
     private final ActivityRetainedCImpl activityRetainedCImpl;
@@ -451,12 +465,14 @@ public final class DaggerFusionarPdfsApplication_HiltComponents_SingletonC {
 
     private Provider<ReorderViewModel> reorderViewModelProvider;
 
+    private Provider<ResultViewModel> resultViewModelProvider;
+
     private ViewModelCImpl(SingletonCImpl singletonCImpl,
         ActivityRetainedCImpl activityRetainedCImpl, SavedStateHandle savedStateHandleParam,
         ViewModelLifecycle viewModelLifecycleParam) {
       this.singletonCImpl = singletonCImpl;
       this.activityRetainedCImpl = activityRetainedCImpl;
-
+      this.savedStateHandle = savedStateHandleParam;
       initialize(savedStateHandleParam, viewModelLifecycleParam);
 
     }
@@ -497,6 +513,22 @@ public final class DaggerFusionarPdfsApplication_HiltComponents_SingletonC {
       return new UpdatePdfOrderUseCase(singletonCImpl.mergeSessionRepositoryImplProvider.get());
     }
 
+    private GetMergeResultUseCase getMergeResultUseCase() {
+      return new GetMergeResultUseCase(singletonCImpl.mergeSessionRepositoryImplProvider.get(), singletonCImpl.mergeHistoryRepositoryImplProvider.get());
+    }
+
+    private OpenMergedPdfUseCase openMergedPdfUseCase() {
+      return new OpenMergedPdfUseCase(ApplicationContextModule_ProvideContextFactory.provideContext(singletonCImpl.applicationContextModule));
+    }
+
+    private ShareMergedPdfUseCase shareMergedPdfUseCase() {
+      return new ShareMergedPdfUseCase(ApplicationContextModule_ProvideContextFactory.provideContext(singletonCImpl.applicationContextModule));
+    }
+
+    private StartNewMergeUseCase startNewMergeUseCase() {
+      return new StartNewMergeUseCase(clearPdfSelectionUseCase(), singletonCImpl.mergeSessionRepositoryImplProvider.get());
+    }
+
     @SuppressWarnings("unchecked")
     private void initialize(final SavedStateHandle savedStateHandleParam,
         final ViewModelLifecycle viewModelLifecycleParam) {
@@ -504,11 +536,12 @@ public final class DaggerFusionarPdfsApplication_HiltComponents_SingletonC {
       this.previewViewModelProvider = new SwitchingProvider<>(singletonCImpl, activityRetainedCImpl, viewModelCImpl, 1);
       this.progressViewModelProvider = new SwitchingProvider<>(singletonCImpl, activityRetainedCImpl, viewModelCImpl, 2);
       this.reorderViewModelProvider = new SwitchingProvider<>(singletonCImpl, activityRetainedCImpl, viewModelCImpl, 3);
+      this.resultViewModelProvider = new SwitchingProvider<>(singletonCImpl, activityRetainedCImpl, viewModelCImpl, 4);
     }
 
     @Override
     public Map<Class<?>, javax.inject.Provider<ViewModel>> getHiltViewModelMap() {
-      return LazyClassKeyMap.<javax.inject.Provider<ViewModel>>of(MapBuilder.<String, javax.inject.Provider<ViewModel>>newMapBuilder(4).put(LazyClassKeyProvider.com_app_fusionarpdfs_presentation_home_HomeViewModel, ((Provider) homeViewModelProvider)).put(LazyClassKeyProvider.com_app_fusionarpdfs_presentation_preview_PreviewViewModel, ((Provider) previewViewModelProvider)).put(LazyClassKeyProvider.com_app_fusionarpdfs_presentation_progress_ProgressViewModel, ((Provider) progressViewModelProvider)).put(LazyClassKeyProvider.com_app_fusionarpdfs_presentation_reorder_ReorderViewModel, ((Provider) reorderViewModelProvider)).build());
+      return LazyClassKeyMap.<javax.inject.Provider<ViewModel>>of(MapBuilder.<String, javax.inject.Provider<ViewModel>>newMapBuilder(5).put(LazyClassKeyProvider.com_app_fusionarpdfs_presentation_home_HomeViewModel, ((Provider) homeViewModelProvider)).put(LazyClassKeyProvider.com_app_fusionarpdfs_presentation_preview_PreviewViewModel, ((Provider) previewViewModelProvider)).put(LazyClassKeyProvider.com_app_fusionarpdfs_presentation_progress_ProgressViewModel, ((Provider) progressViewModelProvider)).put(LazyClassKeyProvider.com_app_fusionarpdfs_presentation_reorder_ReorderViewModel, ((Provider) reorderViewModelProvider)).put(LazyClassKeyProvider.com_app_fusionarpdfs_presentation_result_ResultViewModel, ((Provider) resultViewModelProvider)).build());
     }
 
     @Override
@@ -518,16 +551,18 @@ public final class DaggerFusionarPdfsApplication_HiltComponents_SingletonC {
 
     @IdentifierNameString
     private static final class LazyClassKeyProvider {
-      static String com_app_fusionarpdfs_presentation_home_HomeViewModel = "com.app.fusionarpdfs.presentation.home.HomeViewModel";
+      static String com_app_fusionarpdfs_presentation_reorder_ReorderViewModel = "com.app.fusionarpdfs.presentation.reorder.ReorderViewModel";
 
       static String com_app_fusionarpdfs_presentation_preview_PreviewViewModel = "com.app.fusionarpdfs.presentation.preview.PreviewViewModel";
 
       static String com_app_fusionarpdfs_presentation_progress_ProgressViewModel = "com.app.fusionarpdfs.presentation.progress.ProgressViewModel";
 
-      static String com_app_fusionarpdfs_presentation_reorder_ReorderViewModel = "com.app.fusionarpdfs.presentation.reorder.ReorderViewModel";
+      static String com_app_fusionarpdfs_presentation_result_ResultViewModel = "com.app.fusionarpdfs.presentation.result.ResultViewModel";
+
+      static String com_app_fusionarpdfs_presentation_home_HomeViewModel = "com.app.fusionarpdfs.presentation.home.HomeViewModel";
 
       @KeepFieldType
-      HomeViewModel com_app_fusionarpdfs_presentation_home_HomeViewModel2;
+      ReorderViewModel com_app_fusionarpdfs_presentation_reorder_ReorderViewModel2;
 
       @KeepFieldType
       PreviewViewModel com_app_fusionarpdfs_presentation_preview_PreviewViewModel2;
@@ -536,7 +571,10 @@ public final class DaggerFusionarPdfsApplication_HiltComponents_SingletonC {
       ProgressViewModel com_app_fusionarpdfs_presentation_progress_ProgressViewModel2;
 
       @KeepFieldType
-      ReorderViewModel com_app_fusionarpdfs_presentation_reorder_ReorderViewModel2;
+      ResultViewModel com_app_fusionarpdfs_presentation_result_ResultViewModel2;
+
+      @KeepFieldType
+      HomeViewModel com_app_fusionarpdfs_presentation_home_HomeViewModel2;
     }
 
     private static final class SwitchingProvider<T> implements Provider<T> {
@@ -571,6 +609,9 @@ public final class DaggerFusionarPdfsApplication_HiltComponents_SingletonC {
 
           case 3: // com.app.fusionarpdfs.presentation.reorder.ReorderViewModel 
           return (T) new ReorderViewModel(singletonCImpl.mergeSessionRepositoryImplProvider.get(), viewModelCImpl.updatePdfOrderUseCase(), viewModelCImpl.removeSelectedPdfUseCase(), new ValidatePdfSelectionUseCase());
+
+          case 4: // com.app.fusionarpdfs.presentation.result.ResultViewModel 
+          return (T) new ResultViewModel(viewModelCImpl.savedStateHandle, viewModelCImpl.getMergeResultUseCase(), viewModelCImpl.openMergedPdfUseCase(), viewModelCImpl.shareMergedPdfUseCase(), viewModelCImpl.startNewMergeUseCase());
 
           default: throw new AssertionError(id);
         }
@@ -668,6 +709,8 @@ public final class DaggerFusionarPdfsApplication_HiltComponents_SingletonC {
 
     private Provider<PdfMergerRepositoryImpl> pdfMergerRepositoryImplProvider;
 
+    private Provider<MergeHistoryRepositoryImpl> mergeHistoryRepositoryImplProvider;
+
     private SingletonCImpl(ApplicationContextModule applicationContextModuleParam) {
       this.applicationContextModule = applicationContextModuleParam;
       initialize(applicationContextModuleParam);
@@ -684,6 +727,7 @@ public final class DaggerFusionarPdfsApplication_HiltComponents_SingletonC {
       this.mergeErrorMapperProvider = DoubleCheck.provider(new SwitchingProvider<MergeErrorMapper>(singletonCImpl, 7));
       this.pdfMergerDataSourceProvider = DoubleCheck.provider(new SwitchingProvider<PdfMergerDataSource>(singletonCImpl, 6));
       this.pdfMergerRepositoryImplProvider = DoubleCheck.provider(new SwitchingProvider<PdfMergerRepositoryImpl>(singletonCImpl, 5));
+      this.mergeHistoryRepositoryImplProvider = DoubleCheck.provider(new SwitchingProvider<MergeHistoryRepositoryImpl>(singletonCImpl, 8));
     }
 
     @Override
@@ -742,6 +786,9 @@ public final class DaggerFusionarPdfsApplication_HiltComponents_SingletonC {
 
           case 7: // com.app.fusionarpdfs.data.datasource.MergeErrorMapper 
           return (T) new MergeErrorMapper();
+
+          case 8: // com.app.fusionarpdfs.data.repository.MergeHistoryRepositoryImpl 
+          return (T) new MergeHistoryRepositoryImpl();
 
           default: throw new AssertionError(id);
         }

@@ -64,9 +64,7 @@ fun FusionarPdfsNavGraph(
                 },
             ),
         ) { backStackEntry ->
-            val historyItemId = backStackEntry.arguments?.getString(NavArgs.HISTORY_ITEM_ID)
             ResultScreen(
-                historyItemId = historyItemId,
                 onNavigateToHome = { navController.navigateToHome(clearBackStack = true) },
                 onNavigateToHistory = { navController.navigateToHistory() },
             )
