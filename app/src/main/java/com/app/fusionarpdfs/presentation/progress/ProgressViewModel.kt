@@ -7,6 +7,7 @@ import com.app.fusionarpdfs.domain.model.MergeError
 import com.app.fusionarpdfs.domain.model.MergeException
 import com.app.fusionarpdfs.domain.repository.MergeSessionRepository
 import com.app.fusionarpdfs.domain.usecase.ExecuteMergeFromSessionUseCase
+import com.app.fusionarpdfs.domain.usecase.SaveHistoryUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.CancellationException
@@ -21,6 +22,7 @@ import kotlinx.coroutines.launch
 class ProgressViewModel @Inject constructor(
     private val mergeSessionRepository: MergeSessionRepository,
     private val executeMergeFromSessionUseCase: ExecuteMergeFromSessionUseCase,
+    private val saveHistoryUseCase: SaveHistoryUseCase,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(ProgressUiState())
@@ -74,6 +76,7 @@ class ProgressViewModel @Inject constructor(
 
                 result.fold(
                     onSuccess = { mergeResult ->
+                        saveHistoryUseCase(mergeResult)
                         mergeSessionRepository.setLastMergeResult(mergeResult)
                         _uiState.update {
                             it.copy(

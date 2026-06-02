@@ -1,10 +1,12 @@
 package com.app.fusionarpdfs.data.repository;
 
+import com.app.fusionarpdfs.data.preferences.MergeHistoryLocalDataSource;
 import dagger.internal.DaggerGenerated;
 import dagger.internal.Factory;
 import dagger.internal.QualifierMetadata;
 import dagger.internal.ScopeMetadata;
 import javax.annotation.processing.Generated;
+import javax.inject.Provider;
 
 @ScopeMetadata("javax.inject.Singleton")
 @QualifierMetadata
@@ -22,20 +24,25 @@ import javax.annotation.processing.Generated;
     "deprecation"
 })
 public final class MergeHistoryRepositoryImpl_Factory implements Factory<MergeHistoryRepositoryImpl> {
+  private final Provider<MergeHistoryLocalDataSource> mergeHistoryLocalDataSourceProvider;
+
+  public MergeHistoryRepositoryImpl_Factory(
+      Provider<MergeHistoryLocalDataSource> mergeHistoryLocalDataSourceProvider) {
+    this.mergeHistoryLocalDataSourceProvider = mergeHistoryLocalDataSourceProvider;
+  }
+
   @Override
   public MergeHistoryRepositoryImpl get() {
-    return newInstance();
+    return newInstance(mergeHistoryLocalDataSourceProvider.get());
   }
 
-  public static MergeHistoryRepositoryImpl_Factory create() {
-    return InstanceHolder.INSTANCE;
+  public static MergeHistoryRepositoryImpl_Factory create(
+      Provider<MergeHistoryLocalDataSource> mergeHistoryLocalDataSourceProvider) {
+    return new MergeHistoryRepositoryImpl_Factory(mergeHistoryLocalDataSourceProvider);
   }
 
-  public static MergeHistoryRepositoryImpl newInstance() {
-    return new MergeHistoryRepositoryImpl();
-  }
-
-  private static final class InstanceHolder {
-    private static final MergeHistoryRepositoryImpl_Factory INSTANCE = new MergeHistoryRepositoryImpl_Factory();
+  public static MergeHistoryRepositoryImpl newInstance(
+      MergeHistoryLocalDataSource mergeHistoryLocalDataSource) {
+    return new MergeHistoryRepositoryImpl(mergeHistoryLocalDataSource);
   }
 }
