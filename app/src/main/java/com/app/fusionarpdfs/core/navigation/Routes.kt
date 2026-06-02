@@ -20,6 +20,10 @@ sealed class Route(val path: String) {
 
     data object Settings : Route("settings")
 
+    data object PrivacyPolicy : Route("settings/privacy")
+
+    data object OpenSourceLicenses : Route("settings/licenses")
+
     data object Result : Route(RESULT_ROUTE_PATTERN) {
 
         fun buildRoute(historyItemId: String? = null): String {

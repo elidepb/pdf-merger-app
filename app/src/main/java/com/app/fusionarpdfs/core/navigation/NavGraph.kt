@@ -7,8 +7,10 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.app.fusionarpdfs.core.constants.LegalDocuments
 import com.app.fusionarpdfs.presentation.history.HistoryScreen
 import com.app.fusionarpdfs.presentation.home.HomeScreen
+import com.app.fusionarpdfs.presentation.legal.LegalDocumentScreen
 import com.app.fusionarpdfs.presentation.preview.PreviewScreen
 import com.app.fusionarpdfs.presentation.progress.ProgressScreen
 import com.app.fusionarpdfs.presentation.reorder.ReorderScreen
@@ -81,6 +83,24 @@ fun FusionarPdfsNavGraph(
 
         composable(Route.Settings.path) {
             SettingsScreen(
+                onNavigateBack = { navController.navigateBack() },
+                onNavigateToPrivacyPolicy = { navController.navigate(Route.PrivacyPolicy.path) },
+                onNavigateToOpenSourceLicenses = { navController.navigate(Route.OpenSourceLicenses.path) },
+            )
+        }
+
+        composable(Route.PrivacyPolicy.path) {
+            LegalDocumentScreen(
+                title = "Política de privacidad",
+                assetPath = LegalDocuments.PRIVACY_POLICY,
+                onNavigateBack = { navController.navigateBack() },
+            )
+        }
+
+        composable(Route.OpenSourceLicenses.path) {
+            LegalDocumentScreen(
+                title = "Licencias open source",
+                assetPath = LegalDocuments.OPEN_SOURCE_LICENSES,
                 onNavigateBack = { navController.navigateBack() },
             )
         }

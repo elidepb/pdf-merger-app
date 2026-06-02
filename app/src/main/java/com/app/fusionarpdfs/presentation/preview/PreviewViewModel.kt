@@ -9,6 +9,7 @@ import com.app.fusionarpdfs.domain.model.MergeConfiguration
 import com.app.fusionarpdfs.domain.model.MergeConfigurationError
 import com.app.fusionarpdfs.domain.model.MergeConfigurationValidation
 import com.app.fusionarpdfs.domain.repository.MergeSessionRepository
+import com.app.fusionarpdfs.domain.repository.UserPreferencesRepository
 import com.app.fusionarpdfs.domain.usecase.PersistOutputUriPermissionUseCase
 import com.app.fusionarpdfs.domain.usecase.SaveMergeConfigurationUseCase
 import com.app.fusionarpdfs.domain.usecase.ValidateMergeConfigurationUseCase
@@ -23,6 +24,7 @@ import kotlinx.coroutines.launch
 @HiltViewModel
 class PreviewViewModel @Inject constructor(
     mergeSessionRepository: MergeSessionRepository,
+    userPreferencesRepository: UserPreferencesRepository,
     private val validateMergeConfigurationUseCase: ValidateMergeConfigurationUseCase,
     private val saveMergeConfigurationUseCase: SaveMergeConfigurationUseCase,
     private val persistOutputUriPermissionUseCase: PersistOutputUriPermissionUseCase,
@@ -30,6 +32,8 @@ class PreviewViewModel @Inject constructor(
 
     private val _uiState = MutableStateFlow(PreviewUiState())
     val uiState: StateFlow<PreviewUiState> = _uiState.asStateFlow()
+
+    private var hasInitializedDefaultFileName = false
 
     init {
         viewModelScope.launch {
@@ -52,6 +56,24 @@ class PreviewViewModel @Inject constructor(
                         outputUri = configuration.outputUri,
                         outputLocationLabel = configuration.outputUri?.toOutputLocationLabel(),
                     )
+                }
+            }
+        }
+
+        viewModelScope.launch {
+            userPreferencesRepository.preferencesFlow.collect { preferences ->
+                if (!hasInitializedDefaultFileName && _uiState.value.outputUri.isNullOrBlank()) {
+                    hasInitializedDefaultFileName = true
+                    _uiState.update {
+                        it.copy(
+                            confirmBeforeMerge = preferences.confirmBeforeMerge,
+                            outputFileName = preferences.defaultPdfFileName,
+                        )
+                    }
+                } else {
+                    _uiState.update {
+                        it.copy(confirmBeforeMerge = preferences.confirmBeforeMerge)
+                    }
                 }
             }
         }
@@ -91,21 +113,45 @@ class PreviewViewModel @Inject constructor(
             )
         ) {
             MergeConfigurationValidation.Valid -> {
-                saveMergeConfigurationUseCase(configuration)
-                _uiState.update {
-                    it.copy(
-                        outputFileName = configuration.outputFileName,
-                        outputUri = configuration.outputUri,
-                        outputLocationLabel = configuration.outputUri?.toOutputLocationLabel(),
-                    )
+                if (_uiState.value.confirmBeforeMerge) {
+                    _uiState.update {
+                        it.copy(
+                            showMergeConfirmation = true,
+                            pendingConfiguration = configuration,
+                        )
+                    }
+                    PreviewMergeAction.None
+                } else {
+                    proceedWithMerge(configuration)
                 }
-                PreviewMergeAction.NavigateToProgress
             }
 
             is MergeConfigurationValidation.Invalid -> {
                 PreviewMergeAction.ShowMessage(validation.error.toUserMessage())
             }
         }
+    }
+
+    fun onConfirmMerge(): PreviewMergeAction {
+        val configuration = _uiState.value.pendingConfiguration ?: return PreviewMergeAction.None
+        _uiState.update { it.copy(showMergeConfirmation = false, pendingConfiguration = null) }
+        return proceedWithMerge(configuration)
+    }
+
+    fun onDismissMergeConfirmation() {
+        _uiState.update { it.copy(showMergeConfirmation = false, pendingConfiguration = null) }
+    }
+
+    private fun proceedWithMerge(configuration: MergeConfiguration): PreviewMergeAction {
+        saveMergeConfigurationUseCase(configuration)
+        _uiState.update {
+            it.copy(
+                outputFileName = configuration.outputFileName,
+                outputUri = configuration.outputUri,
+                outputLocationLabel = configuration.outputUri?.toOutputLocationLabel(),
+            )
+        }
+        return PreviewMergeAction.NavigateToProgress
     }
 }
 

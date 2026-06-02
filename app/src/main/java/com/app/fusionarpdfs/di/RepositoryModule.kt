@@ -4,10 +4,12 @@ import com.app.fusionarpdfs.data.repository.MergeHistoryRepositoryImpl
 import com.app.fusionarpdfs.data.repository.MergeSessionRepositoryImpl
 import com.app.fusionarpdfs.data.repository.PdfFileRepositoryImpl
 import com.app.fusionarpdfs.data.repository.PdfMergerRepositoryImpl
+import com.app.fusionarpdfs.data.repository.UserPreferencesRepositoryImpl
 import com.app.fusionarpdfs.domain.repository.MergeHistoryRepository
 import com.app.fusionarpdfs.domain.repository.MergeSessionRepository
 import com.app.fusionarpdfs.domain.repository.PdfFileRepository
 import com.app.fusionarpdfs.domain.repository.PdfMergerRepository
+import com.app.fusionarpdfs.domain.repository.UserPreferencesRepository
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -41,4 +43,10 @@ abstract class RepositoryModule {
     abstract fun bindMergeSessionRepository(
         impl: MergeSessionRepositoryImpl,
     ): MergeSessionRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindUserPreferencesRepository(
+        impl: UserPreferencesRepositoryImpl,
+    ): UserPreferencesRepository
 }
