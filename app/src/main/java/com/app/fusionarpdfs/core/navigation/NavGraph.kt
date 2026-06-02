@@ -24,6 +24,10 @@ fun FusionarPdfsNavGraph(
     NavHost(
         navController = navController,
         startDestination = Route.Home.path,
+        enterTransition = { defaultEnterTransition() },
+        exitTransition = { defaultExitTransition() },
+        popEnterTransition = { defaultPopEnterTransition() },
+        popExitTransition = { defaultPopExitTransition() },
     ) {
         composable(Route.Home.path) {
             HomeScreen(
@@ -65,7 +69,7 @@ fun FusionarPdfsNavGraph(
                     defaultValue = null
                 },
             ),
-        ) { backStackEntry ->
+        ) {
             ResultScreen(
                 onNavigateToHome = { navController.navigateToHome(clearBackStack = true) },
                 onNavigateToHistory = { navController.navigateToHistory() },

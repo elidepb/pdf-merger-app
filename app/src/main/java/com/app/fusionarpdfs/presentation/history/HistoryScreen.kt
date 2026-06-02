@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import com.app.fusionarpdfs.core.accessibility.A11yLabels
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.DeleteSweep
@@ -74,7 +75,7 @@ fun HistoryScreen(
                 title = { Text("Historial") },
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Volver")
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = A11yLabels.BACK)
                     }
                 },
                 actions = {
@@ -114,7 +115,9 @@ fun HistoryScreen(
                         onOpen = { viewModel.onOpenPdf(item) },
                         onShare = { viewModel.onSharePdf(item) },
                         onDelete = { viewModel.onDeleteItem(item.id) },
-                        modifier = Modifier.padding(bottom = 12.dp),
+                        modifier = Modifier
+                            .animateItem()
+                            .padding(bottom = 12.dp),
                     )
                 }
             }

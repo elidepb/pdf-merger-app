@@ -36,6 +36,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.app.fusionarpdfs.core.accessibility.A11yLabels
+import com.app.fusionarpdfs.core.theme.Spacing
 import com.app.fusionarpdfs.presentation.common.components.ImportFailuresDialog
 import com.app.fusionarpdfs.presentation.home.components.HomeEmptyState
 import com.app.fusionarpdfs.presentation.home.components.HomePdfListItem
@@ -79,14 +81,14 @@ fun HomeScreen(
                 actions = {
                     if (!uiState.isEmpty) {
                         IconButton(onClick = viewModel::onClearSelection) {
-                            Icon(Icons.Default.DeleteSweep, contentDescription = "Limpiar selección")
+                            Icon(Icons.Default.DeleteSweep, contentDescription = A11yLabels.CLEAR_SELECTION)
                         }
                     }
                     IconButton(onClick = onNavigateToHistory) {
-                        Icon(Icons.Default.History, contentDescription = "Historial")
+                        Icon(Icons.Default.History, contentDescription = A11yLabels.HISTORY)
                     }
                     IconButton(onClick = onNavigateToSettings) {
-                        Icon(Icons.Default.Settings, contentDescription = "Configuración")
+                        Icon(Icons.Default.Settings, contentDescription = A11yLabels.SETTINGS)
                     }
                 },
             )
@@ -95,7 +97,7 @@ fun HomeScreen(
         floatingActionButton = {
             if (!uiState.isEmpty) {
                 FloatingActionButton(onClick = pdfPicker.openPicker) {
-                    Icon(Icons.Default.UploadFile, contentDescription = "Agregar PDFs")
+                    Icon(Icons.Default.UploadFile, contentDescription = A11yLabels.ADD_PDFS)
                 }
             }
         },
@@ -104,13 +106,13 @@ fun HomeScreen(
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(16.dp),
+                        .padding(Spacing.lg),
                 ) {
                     Text(
                         text = uiState.pdfCountLabel,
                         style = MaterialTheme.typography.bodyLarge,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        modifier = Modifier.padding(bottom = 8.dp),
+                        modifier = Modifier.padding(bottom = Spacing.sm),
                     )
                     Button(
                         onClick = {
@@ -125,12 +127,13 @@ fun HomeScreen(
                         },
                         enabled = uiState.canContinue,
                         modifier = Modifier.fillMaxWidth(),
+                        shape = MaterialTheme.shapes.medium,
                     ) {
                         Text("Continuar")
                         Icon(
                             Icons.AutoMirrored.Filled.ArrowForward,
                             contentDescription = null,
-                            modifier = Modifier.padding(start = 8.dp),
+                            modifier = Modifier.padding(start = Spacing.sm),
                         )
                     }
                 }
@@ -150,7 +153,7 @@ fun HomeScreen(
             } else {
                 LazyColumn(
                     modifier = Modifier.fillMaxSize(),
-                    contentPadding = PaddingValues(16.dp),
+                    contentPadding = PaddingValues(Spacing.lg),
                 ) {
                     items(
                         items = uiState.pdfs,
@@ -159,7 +162,9 @@ fun HomeScreen(
                         HomePdfListItem(
                             pdf = pdf,
                             onRemove = { viewModel.onRemovePdf(pdf.id) },
-                            modifier = Modifier.padding(bottom = 12.dp),
+                            modifier = Modifier
+                                .animateItem()
+                                .padding(bottom = Spacing.md),
                         )
                     }
                 }

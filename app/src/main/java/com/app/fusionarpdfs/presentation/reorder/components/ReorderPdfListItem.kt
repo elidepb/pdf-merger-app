@@ -12,7 +12,6 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.DragIndicator
-import androidx.compose.material.icons.filled.PictureAsPdf
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
@@ -24,11 +23,16 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import com.app.fusionarpdfs.core.accessibility.A11yLabels
+import com.app.fusionarpdfs.core.theme.Spacing
 import com.app.fusionarpdfs.core.utils.formatFileSize
 import com.app.fusionarpdfs.domain.model.PdfFileItem
+import com.app.fusionarpdfs.presentation.common.components.PdfFileIcon
 
 @Composable
 fun ReorderPdfListItem(
@@ -45,21 +49,30 @@ fun ReorderPdfListItem(
     )
 
     Card(
-        modifier = modifier.fillMaxWidth(),
+        modifier = modifier
+            .fillMaxWidth()
+            .semantics(mergeDescendants = true) {
+                contentDescription = "Posición $position, ${pdf.name}, ${formatFileSize(pdf.sizeBytes)}"
+            },
+        shape = MaterialTheme.shapes.medium,
         colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surface,
+            containerColor = if (isDragging) {
+                MaterialTheme.colorScheme.surfaceVariant
+            } else {
+                MaterialTheme.colorScheme.surface
+            },
         ),
         elevation = CardDefaults.cardElevation(defaultElevation = elevation),
     ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 8.dp, vertical = 12.dp),
+                .padding(horizontal = Spacing.sm, vertical = Spacing.md),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Surface(
                 modifier = Modifier
-                    .padding(start = 8.dp)
+                    .padding(start = Spacing.sm)
                     .size(32.dp),
                 shape = CircleShape,
                 color = MaterialTheme.colorScheme.primaryContainer,
@@ -82,20 +95,15 @@ fun ReorderPdfListItem(
             ) {
                 Icon(
                     imageVector = Icons.Default.DragIndicator,
-                    contentDescription = "Reordenar",
+                    contentDescription = A11yLabels.REORDER,
                     tint = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
             }
-            Icon(
-                imageVector = Icons.Default.PictureAsPdf,
-                contentDescription = null,
-                tint = MaterialTheme.colorScheme.primary,
-                modifier = Modifier.padding(horizontal = 4.dp),
-            )
+            PdfFileIcon(modifier = Modifier.padding(horizontal = Spacing.xs))
             Column(
                 modifier = Modifier
                     .weight(1f)
-                    .padding(horizontal = 4.dp),
+                    .padding(horizontal = Spacing.xs),
             ) {
                 Text(
                     text = pdf.name,
@@ -112,7 +120,7 @@ fun ReorderPdfListItem(
             IconButton(onClick = onRemove) {
                 Icon(
                     imageVector = Icons.Default.Delete,
-                    contentDescription = "Eliminar",
+                    contentDescription = "${A11yLabels.DELETE} ${pdf.name}",
                     tint = MaterialTheme.colorScheme.error,
                 )
             }

@@ -433,21 +433,30 @@ public final class DaggerFusionarPdfsApplication_HiltComponents_SingletonC {
 
     @IdentifierNameString
     private static final class LazyClassKeyProvider {
+      static String com_app_fusionarpdfs_presentation_reorder_ReorderViewModel = "com.app.fusionarpdfs.presentation.reorder.ReorderViewModel";
+
+      static String com_app_fusionarpdfs_presentation_history_HistoryViewModel = "com.app.fusionarpdfs.presentation.history.HistoryViewModel";
+
+      static String com_app_fusionarpdfs_presentation_preview_PreviewViewModel = "com.app.fusionarpdfs.presentation.preview.PreviewViewModel";
+
       static String com_app_fusionarpdfs_presentation_result_ResultViewModel = "com.app.fusionarpdfs.presentation.result.ResultViewModel";
 
       static String com_app_fusionarpdfs_presentation_home_HomeViewModel = "com.app.fusionarpdfs.presentation.home.HomeViewModel";
 
       static String com_app_fusionarpdfs_presentation_progress_ProgressViewModel = "com.app.fusionarpdfs.presentation.progress.ProgressViewModel";
 
-      static String com_app_fusionarpdfs_presentation_reorder_ReorderViewModel = "com.app.fusionarpdfs.presentation.reorder.ReorderViewModel";
-
       static String com_app_fusionarpdfs_presentation_settings_SettingsViewModel = "com.app.fusionarpdfs.presentation.settings.SettingsViewModel";
 
-      static String com_app_fusionarpdfs_presentation_history_HistoryViewModel = "com.app.fusionarpdfs.presentation.history.HistoryViewModel";
-
-      static String com_app_fusionarpdfs_presentation_preview_PreviewViewModel = "com.app.fusionarpdfs.presentation.preview.PreviewViewModel";
-
       static String com_app_fusionarpdfs_presentation_AppViewModel = "com.app.fusionarpdfs.presentation.AppViewModel";
+
+      @KeepFieldType
+      ReorderViewModel com_app_fusionarpdfs_presentation_reorder_ReorderViewModel2;
+
+      @KeepFieldType
+      HistoryViewModel com_app_fusionarpdfs_presentation_history_HistoryViewModel2;
+
+      @KeepFieldType
+      PreviewViewModel com_app_fusionarpdfs_presentation_preview_PreviewViewModel2;
 
       @KeepFieldType
       ResultViewModel com_app_fusionarpdfs_presentation_result_ResultViewModel2;
@@ -459,16 +468,7 @@ public final class DaggerFusionarPdfsApplication_HiltComponents_SingletonC {
       ProgressViewModel com_app_fusionarpdfs_presentation_progress_ProgressViewModel2;
 
       @KeepFieldType
-      ReorderViewModel com_app_fusionarpdfs_presentation_reorder_ReorderViewModel2;
-
-      @KeepFieldType
       SettingsViewModel com_app_fusionarpdfs_presentation_settings_SettingsViewModel2;
-
-      @KeepFieldType
-      HistoryViewModel com_app_fusionarpdfs_presentation_history_HistoryViewModel2;
-
-      @KeepFieldType
-      PreviewViewModel com_app_fusionarpdfs_presentation_preview_PreviewViewModel2;
 
       @KeepFieldType
       AppViewModel com_app_fusionarpdfs_presentation_AppViewModel2;
@@ -599,36 +599,27 @@ public final class DaggerFusionarPdfsApplication_HiltComponents_SingletonC {
 
     @IdentifierNameString
     private static final class LazyClassKeyProvider {
+      static String com_app_fusionarpdfs_presentation_reorder_ReorderViewModel = "com.app.fusionarpdfs.presentation.reorder.ReorderViewModel";
+
       static String com_app_fusionarpdfs_presentation_home_HomeViewModel = "com.app.fusionarpdfs.presentation.home.HomeViewModel";
-
-      static String com_app_fusionarpdfs_presentation_AppViewModel = "com.app.fusionarpdfs.presentation.AppViewModel";
-
-      static String com_app_fusionarpdfs_presentation_history_HistoryViewModel = "com.app.fusionarpdfs.presentation.history.HistoryViewModel";
-
-      static String com_app_fusionarpdfs_presentation_preview_PreviewViewModel = "com.app.fusionarpdfs.presentation.preview.PreviewViewModel";
-
-      static String com_app_fusionarpdfs_presentation_settings_SettingsViewModel = "com.app.fusionarpdfs.presentation.settings.SettingsViewModel";
 
       static String com_app_fusionarpdfs_presentation_result_ResultViewModel = "com.app.fusionarpdfs.presentation.result.ResultViewModel";
 
       static String com_app_fusionarpdfs_presentation_progress_ProgressViewModel = "com.app.fusionarpdfs.presentation.progress.ProgressViewModel";
 
-      static String com_app_fusionarpdfs_presentation_reorder_ReorderViewModel = "com.app.fusionarpdfs.presentation.reorder.ReorderViewModel";
+      static String com_app_fusionarpdfs_presentation_AppViewModel = "com.app.fusionarpdfs.presentation.AppViewModel";
+
+      static String com_app_fusionarpdfs_presentation_preview_PreviewViewModel = "com.app.fusionarpdfs.presentation.preview.PreviewViewModel";
+
+      static String com_app_fusionarpdfs_presentation_settings_SettingsViewModel = "com.app.fusionarpdfs.presentation.settings.SettingsViewModel";
+
+      static String com_app_fusionarpdfs_presentation_history_HistoryViewModel = "com.app.fusionarpdfs.presentation.history.HistoryViewModel";
+
+      @KeepFieldType
+      ReorderViewModel com_app_fusionarpdfs_presentation_reorder_ReorderViewModel2;
 
       @KeepFieldType
       HomeViewModel com_app_fusionarpdfs_presentation_home_HomeViewModel2;
-
-      @KeepFieldType
-      AppViewModel com_app_fusionarpdfs_presentation_AppViewModel2;
-
-      @KeepFieldType
-      HistoryViewModel com_app_fusionarpdfs_presentation_history_HistoryViewModel2;
-
-      @KeepFieldType
-      PreviewViewModel com_app_fusionarpdfs_presentation_preview_PreviewViewModel2;
-
-      @KeepFieldType
-      SettingsViewModel com_app_fusionarpdfs_presentation_settings_SettingsViewModel2;
 
       @KeepFieldType
       ResultViewModel com_app_fusionarpdfs_presentation_result_ResultViewModel2;
@@ -637,7 +628,16 @@ public final class DaggerFusionarPdfsApplication_HiltComponents_SingletonC {
       ProgressViewModel com_app_fusionarpdfs_presentation_progress_ProgressViewModel2;
 
       @KeepFieldType
-      ReorderViewModel com_app_fusionarpdfs_presentation_reorder_ReorderViewModel2;
+      AppViewModel com_app_fusionarpdfs_presentation_AppViewModel2;
+
+      @KeepFieldType
+      PreviewViewModel com_app_fusionarpdfs_presentation_preview_PreviewViewModel2;
+
+      @KeepFieldType
+      SettingsViewModel com_app_fusionarpdfs_presentation_settings_SettingsViewModel2;
+
+      @KeepFieldType
+      HistoryViewModel com_app_fusionarpdfs_presentation_history_HistoryViewModel2;
     }
 
     private static final class SwitchingProvider<T> implements Provider<T> {
@@ -812,7 +812,7 @@ public final class DaggerFusionarPdfsApplication_HiltComponents_SingletonC {
     }
 
     @Override
-    public void injectFusionarPdfsApplication(FusionarPdfsApplication fusionarPdfsApplication) {
+    public void injectFusionarPdfsApplication(FusionarPdfsApplication arg0) {
     }
 
     @Override

@@ -13,36 +13,44 @@ import androidx.core.view.WindowCompat
 
 private val LightColorScheme = lightColorScheme(
     primary = PrimaryBlue,
-    onPrimary = SurfaceWhite,
-    primaryContainer = PrimaryBlueDark,
-    onPrimaryContainer = SurfaceWhite,
+    onPrimary = SurfaceLight,
+    primaryContainer = PrimaryBlue.copy(alpha = 0.12f),
+    onPrimaryContainer = PrimaryBlueDark,
     secondary = SecondaryGreen,
-    onSecondary = SurfaceWhite,
+    onSecondary = SurfaceLight,
+    secondaryContainer = SecondaryGreen.copy(alpha = 0.12f),
+    onSecondaryContainer = SecondaryGreen,
     background = BackgroundLight,
     onBackground = TextPrimary,
-    surface = SurfaceWhite,
+    surface = SurfaceLight,
     onSurface = TextPrimary,
+    surfaceVariant = BackgroundLight,
     onSurfaceVariant = TextSecondary,
     error = ErrorRed,
-    onError = SurfaceWhite,
+    onError = SurfaceLight,
     outline = BorderLight,
+    outlineVariant = BorderLight.copy(alpha = 0.6f),
 )
 
 private val DarkColorScheme = darkColorScheme(
-    primary = PrimaryBlue,
-    onPrimary = SurfaceWhite,
+    primary = PrimaryBlueLight,
+    onPrimary = TextPrimary,
     primaryContainer = PrimaryBlueDark,
-    onPrimaryContainer = SurfaceWhite,
+    onPrimaryContainer = TextPrimaryDark,
     secondary = SecondaryGreen,
-    onSecondary = SurfaceWhite,
-    background = TextPrimary,
-    onBackground = BackgroundLight,
-    surface = PrimaryBlueDark,
-    onSurface = BackgroundLight,
-    onSurfaceVariant = TextSecondary,
+    onSecondary = TextPrimary,
+    secondaryContainer = SecondaryGreen.copy(alpha = 0.18f),
+    onSecondaryContainer = SecondaryGreen,
+    background = BackgroundDark,
+    onBackground = TextPrimaryDark,
+    surface = SurfaceDark,
+    onSurface = TextPrimaryDark,
+    surfaceVariant = SurfaceDarkElevated,
+    onSurfaceVariant = TextSecondaryDark,
     error = ErrorRed,
-    onError = SurfaceWhite,
-    outline = BorderLight,
+    onError = TextPrimaryDark,
+    outline = BorderDark,
+    outlineVariant = BorderDark.copy(alpha = 0.6f),
 )
 
 @Composable
@@ -57,13 +65,16 @@ fun FusionarPdfsTheme(
         SideEffect {
             val window = (view.context as Activity).window
             window.statusBarColor = colorScheme.background.toArgb()
+            window.navigationBarColor = colorScheme.background.toArgb()
             WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = !darkTheme
+            WindowCompat.getInsetsController(window, view).isAppearanceLightNavigationBars = !darkTheme
         }
     }
 
     MaterialTheme(
         colorScheme = colorScheme,
         typography = FusionarPdfsTypography,
+        shapes = FusionarPdfsShapes,
         content = content,
     )
 }
