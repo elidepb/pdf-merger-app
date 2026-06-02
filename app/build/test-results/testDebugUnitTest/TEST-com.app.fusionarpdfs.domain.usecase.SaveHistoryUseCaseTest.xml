@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.app.fusionarpdfs.domain.usecase.SaveHistoryUseCaseTest" tests="2" skipped="0" failures="0" errors="0" timestamp="2026-06-02T18:04:19" hostname="ELIDE" time="0.558">
+  <properties/>
+  <testcase name="invoke_delegatesToRepository" classname="com.app.fusionarpdfs.domain.usecase.SaveHistoryUseCaseTest" time="0.548"/>
+  <testcase name="invoke_returnsRepositoryFailure" classname="com.app.fusionarpdfs.domain.usecase.SaveHistoryUseCaseTest" time="0.01"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

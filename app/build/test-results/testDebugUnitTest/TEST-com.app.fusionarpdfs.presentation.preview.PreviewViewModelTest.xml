@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.app.fusionarpdfs.presentation.preview.PreviewViewModelTest" tests="8" skipped="0" failures="0" errors="0" timestamp="2026-06-02T18:04:20" hostname="ELIDE" time="0.651">
+  <properties/>
+  <testcase name="onMergeClick_showsConfirmationWhenConfiguredAndConfirmationEnabled" classname="com.app.fusionarpdfs.presentation.preview.PreviewViewModelTest" time="0.449"/>
+  <testcase name="uiState_reflectsSelectedPdfsAndDefaultFileName" classname="com.app.fusionarpdfs.presentation.preview.PreviewViewModelTest" time="0.027"/>
+  <testcase name="onMergeClick_showsErrorDialogWhenConfigurationIsInvalid" classname="com.app.fusionarpdfs.presentation.preview.PreviewViewModelTest" time="0.032"/>
+  <testcase name="onMergeClick_navigatesDirectlyWhenConfirmationDisabled" classname="com.app.fusionarpdfs.presentation.preview.PreviewViewModelTest" time="0.035"/>
+  <testcase name="onConfirmMerge_navigatesAndClearsPendingConfiguration" classname="com.app.fusionarpdfs.presentation.preview.PreviewViewModelTest" time="0.031"/>
+  <testcase name="onDismissMergeConfirmation_clearsDialogState" classname="com.app.fusionarpdfs.presentation.preview.PreviewViewModelTest" time="0.024"/>
+  <testcase name="onFileNameChange_updatesOutputFileName" classname="com.app.fusionarpdfs.presentation.preview.PreviewViewModelTest" time="0.02"/>
+  <testcase name="onOutputLocationSelected_persistsPermissionAndUpdatesState" classname="com.app.fusionarpdfs.presentation.preview.PreviewViewModelTest" time="0.032"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>
