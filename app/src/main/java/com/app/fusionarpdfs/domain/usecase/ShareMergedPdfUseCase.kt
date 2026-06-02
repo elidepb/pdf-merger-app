@@ -6,14 +6,25 @@ import android.content.Intent
 import android.net.Uri
 import com.app.fusionarpdfs.core.constants.AppConstants
 import com.app.fusionarpdfs.core.constants.MimeTypes
+import com.app.fusionarpdfs.domain.model.PdfAccessError
+import com.app.fusionarpdfs.domain.model.PdfAccessException
+import com.app.fusionarpdfs.domain.repository.PdfFileRepository
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 
 class ShareMergedPdfUseCase @Inject constructor(
     @ApplicationContext private val context: Context,
+    private val pdfFileRepository: PdfFileRepository,
 ) {
 
-    operator fun invoke(uri: Uri, fileName: String): Result<Unit> {
+    suspend operator fun invoke(uri: Uri, fileName: String): Result<Unit> {
+        pdfFileRepository.validatePdfAccessible(uri).fold(
+            onSuccess = {},
+            onFailure = {
+                return Result.failure(PdfAccessException(PdfAccessError.FILE_INACCESSIBLE))
+            },
+        )
+
         val intent = Intent(Intent.ACTION_SEND).apply {
             type = MimeTypes.PDF
             putExtra(Intent.EXTRA_STREAM, uri)
@@ -27,9 +38,7 @@ class ShareMergedPdfUseCase @Inject constructor(
             )
             Result.success(Unit)
         } catch (_: ActivityNotFoundException) {
-            Result.failure(SharePdfException)
+            Result.failure(PdfAccessException(PdfAccessError.NO_SHARE_APP))
         }
     }
 }
-
-object SharePdfException : Exception()

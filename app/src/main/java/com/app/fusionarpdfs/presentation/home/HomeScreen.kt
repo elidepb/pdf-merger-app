@@ -36,6 +36,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.app.fusionarpdfs.presentation.common.components.ImportFailuresDialog
 import com.app.fusionarpdfs.presentation.home.components.HomeEmptyState
 import com.app.fusionarpdfs.presentation.home.components.HomePdfListItem
 import com.app.fusionarpdfs.presentation.pdf.rememberPdfDocumentPicker
@@ -62,6 +63,13 @@ fun HomeScreen(
             snackbarHostState.showSnackbar(message)
             viewModel.onUserMessageShown()
         }
+    }
+
+    uiState.importFailuresDialog?.let { dialogState ->
+        ImportFailuresDialog(
+            state = dialogState,
+            onDismiss = viewModel::onImportFailuresDialogDismissed,
+        )
     }
 
     Scaffold(

@@ -3,14 +3,16 @@ package com.app.fusionarpdfs.presentation.home
 import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.app.fusionarpdfs.core.utils.toUserMessage
 import com.app.fusionarpdfs.domain.model.PdfImportResult
 import com.app.fusionarpdfs.domain.model.PdfSelectionValidation
-import com.app.fusionarpdfs.domain.model.ValidationError
 import com.app.fusionarpdfs.domain.repository.MergeSessionRepository
 import com.app.fusionarpdfs.domain.usecase.AddPdfsFromUrisUseCase
 import com.app.fusionarpdfs.domain.usecase.ClearPdfSelectionUseCase
 import com.app.fusionarpdfs.domain.usecase.RemoveSelectedPdfUseCase
 import com.app.fusionarpdfs.domain.usecase.ValidatePdfSelectionUseCase
+import com.app.fusionarpdfs.presentation.common.ImportFailureItem
+import com.app.fusionarpdfs.presentation.common.ImportFailuresDialogState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -51,11 +53,14 @@ class HomeViewModel @Inject constructor(
                 }
 
                 is PdfImportResult.Completed -> {
-                    val message = buildImportMessage(result)
+                    val snackbarMessage = buildImportSnackbarMessage(result)
+                    val failuresDialog = buildImportFailuresDialog(result)
+
                     _uiState.update {
                         it.copy(
                             isLoading = false,
-                            userMessage = message,
+                            userMessage = snackbarMessage,
+                            importFailuresDialog = failuresDialog,
                         )
                     }
                 }
@@ -86,31 +91,50 @@ class HomeViewModel @Inject constructor(
         _uiState.update { it.copy(userMessage = null) }
     }
 
-    private fun buildImportMessage(result: PdfImportResult.Completed): String? {
+    fun onImportFailuresDialogDismissed() {
+        _uiState.update { it.copy(importFailuresDialog = null) }
+    }
+
+    private fun buildImportSnackbarMessage(result: PdfImportResult.Completed): String? {
         val addedCount = result.added.size
         val failureCount = result.failures.size
 
         return when {
-            addedCount == 0 && failureCount > 0 -> {
-                "No se pudo importar ningún PDF"
-            }
-
-            addedCount > 0 && failureCount > 0 -> {
-                "$addedCount PDF${if (addedCount == 1) "" else "s"} agregado${if (addedCount == 1) "" else "s"}. $failureCount no importado${if (failureCount == 1) "" else "s"}"
-            }
-
-            addedCount > 0 -> {
+            addedCount > 0 && failureCount == 0 -> {
                 "$addedCount PDF${if (addedCount == 1) "" else "s"} agregado${if (addedCount == 1) "" else "s"}"
             }
 
             else -> null
         }
     }
-}
 
-private fun ValidationError.toUserMessage(): String {
-    return when (this) {
-        ValidationError.TOO_FEW_FILES -> "Selecciona al menos 2 PDFs para continuar"
-        ValidationError.DUPLICATE_FILES -> "Hay archivos duplicados en la selección"
+    private fun buildImportFailuresDialog(
+        result: PdfImportResult.Completed,
+    ): ImportFailuresDialogState? {
+        if (result.failures.isEmpty()) return null
+
+        val addedCount = result.added.size
+        val failureCount = result.failures.size
+
+        val summary = when {
+            addedCount == 0 -> "No se pudo importar ningún PDF."
+            else -> "$failureCount archivo${if (failureCount == 1) "" else "s"} no se importó${if (failureCount == 1) "" else "ron"}."
+        }
+
+        val title = when {
+            addedCount == 0 -> "Error al importar"
+            else -> "Algunos archivos no se importaron"
+        }
+
+        return ImportFailuresDialogState(
+            title = title,
+            summary = summary,
+            failures = result.failures.map { failure ->
+                ImportFailureItem(
+                    fileName = failure.uri.lastPathSegment ?: "Archivo desconocido",
+                    reason = failure.error.toUserMessage(),
+                )
+            },
+        )
     }
 }

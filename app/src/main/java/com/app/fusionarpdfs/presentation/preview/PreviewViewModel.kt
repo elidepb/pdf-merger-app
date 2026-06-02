@@ -5,14 +5,15 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.app.fusionarpdfs.core.constants.AppConstants
 import com.app.fusionarpdfs.core.utils.normalizePdfFileName
+import com.app.fusionarpdfs.core.utils.toUserMessage
 import com.app.fusionarpdfs.domain.model.MergeConfiguration
-import com.app.fusionarpdfs.domain.model.MergeConfigurationError
 import com.app.fusionarpdfs.domain.model.MergeConfigurationValidation
 import com.app.fusionarpdfs.domain.repository.MergeSessionRepository
 import com.app.fusionarpdfs.domain.repository.UserPreferencesRepository
 import com.app.fusionarpdfs.domain.usecase.PersistOutputUriPermissionUseCase
 import com.app.fusionarpdfs.domain.usecase.SaveMergeConfigurationUseCase
 import com.app.fusionarpdfs.domain.usecase.ValidateMergeConfigurationUseCase
+import com.app.fusionarpdfs.presentation.common.ErrorDialogState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -127,7 +128,15 @@ class PreviewViewModel @Inject constructor(
             }
 
             is MergeConfigurationValidation.Invalid -> {
-                PreviewMergeAction.ShowMessage(validation.error.toUserMessage())
+                _uiState.update {
+                    it.copy(
+                        errorDialog = ErrorDialogState(
+                            title = "Configuración incompleta",
+                            message = validation.error.toUserMessage(),
+                        ),
+                    )
+                }
+                PreviewMergeAction.None
             }
         }
     }
@@ -140,6 +149,10 @@ class PreviewViewModel @Inject constructor(
 
     fun onDismissMergeConfirmation() {
         _uiState.update { it.copy(showMergeConfirmation = false, pendingConfiguration = null) }
+    }
+
+    fun onErrorDialogDismissed() {
+        _uiState.update { it.copy(errorDialog = null) }
     }
 
     private fun proceedWithMerge(configuration: MergeConfiguration): PreviewMergeAction {
@@ -157,14 +170,4 @@ class PreviewViewModel @Inject constructor(
 
 private fun String.toOutputLocationLabel(): String {
     return Uri.parse(this).lastPathSegment ?: "Ubicación seleccionada"
-}
-
-private fun MergeConfigurationError.toUserMessage(): String {
-    return when (this) {
-        MergeConfigurationError.TOO_FEW_FILES -> "Selecciona al menos 2 PDFs para continuar"
-        MergeConfigurationError.DUPLICATE_FILES -> "Hay archivos duplicados en la selección"
-        MergeConfigurationError.EMPTY_FILE_NAME -> "Ingresa un nombre para el archivo"
-        MergeConfigurationError.INVALID_FILE_NAME -> "El nombre del archivo no es válido"
-        MergeConfigurationError.MISSING_OUTPUT_LOCATION -> "Selecciona dónde guardar el PDF"
-    }
 }
