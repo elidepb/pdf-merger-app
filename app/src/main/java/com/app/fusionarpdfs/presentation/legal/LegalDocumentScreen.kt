@@ -9,12 +9,15 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.viewinterop.AndroidView
+import com.app.fusionarpdfs.core.accessibility.A11yLabels
+import com.app.fusionarpdfs.core.theme.toCssHex
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -23,13 +26,16 @@ fun LegalDocumentScreen(
     assetPath: String,
     onNavigateBack: () -> Unit,
 ) {
+    val backgroundColor = MaterialTheme.colorScheme.background.toCssHex()
+    val textColor = MaterialTheme.colorScheme.onBackground.toCssHex()
+
     Scaffold(
         topBar = {
             TopAppBar(
                 title = { Text(title) },
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Volver")
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = A11yLabels.BACK)
                     }
                 },
             )
@@ -42,9 +48,20 @@ fun LegalDocumentScreen(
             factory = { context ->
                 WebView(context).apply {
                     webViewClient = WebViewClient()
-                    settings.javaScriptEnabled = false
+                    settings.javaScriptEnabled = true
                     loadUrl("file:///android_asset/$assetPath")
                 }
+            },
+            update = { webView ->
+                webView.evaluateJavascript(
+                    """
+                    (function() {
+                        document.body.style.backgroundColor = '$backgroundColor';
+                        document.body.style.color = '$textColor';
+                    })();
+                    """.trimIndent(),
+                    null,
+                )
             },
         )
     }

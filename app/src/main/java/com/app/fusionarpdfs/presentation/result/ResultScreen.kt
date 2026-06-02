@@ -6,13 +6,10 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.automirrored.filled.OpenInNew
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.Button
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -30,13 +27,17 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.app.fusionarpdfs.core.accessibility.A11yLabels
+import com.app.fusionarpdfs.core.theme.Spacing
 import com.app.fusionarpdfs.core.utils.formatFileSize
 import com.app.fusionarpdfs.core.utils.formatMergeDate
 import com.app.fusionarpdfs.presentation.common.ErrorDialogAction
+import com.app.fusionarpdfs.presentation.common.components.AnimatedFadeIn
+import com.app.fusionarpdfs.presentation.common.components.AnimatedSuccessIcon
 import com.app.fusionarpdfs.presentation.common.components.AppFeedbackHandler
+import com.app.fusionarpdfs.presentation.common.components.FusionarPdfsCard
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -84,36 +85,30 @@ fun ResultScreen(
                 val mergeResult = uiState.mergeResult!!
                 val actionsEnabled = uiState.isFileAccessible
 
+                AnimatedFadeIn(visible = true) {
                 Column(
                     modifier = Modifier
                         .fillMaxSize()
                         .padding(innerPadding)
-                        .padding(24.dp),
+                        .padding(Spacing.xl),
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.Center,
                 ) {
-                    Icon(
-                        imageVector = Icons.Default.CheckCircle,
-                        contentDescription = null,
-                        tint = MaterialTheme.colorScheme.secondary,
-                    )
+                    AnimatedSuccessIcon()
                     Text(
                         text = "PDF fusionado correctamente",
                         style = MaterialTheme.typography.headlineMedium,
                         textAlign = TextAlign.Center,
-                        modifier = Modifier.padding(top = 16.dp),
+                        modifier = Modifier.padding(top = Spacing.lg),
                     )
 
                     if (!actionsEnabled) {
-                        Card(
+                        FusionarPdfsCard(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .padding(top = 16.dp),
-                            colors = CardDefaults.cardColors(
-                                containerColor = MaterialTheme.colorScheme.errorContainer.copy(alpha = 0.35f),
-                            ),
+                                .padding(top = Spacing.lg),
                         ) {
-                            Column(modifier = Modifier.padding(16.dp)) {
+                            Column(modifier = Modifier.padding(Spacing.lg)) {
                                 Icon(
                                     imageVector = Icons.Default.Warning,
                                     contentDescription = null,
@@ -122,22 +117,18 @@ fun ResultScreen(
                                 Text(
                                     text = "El archivo ya no está accesible en su ubicación original.",
                                     style = MaterialTheme.typography.bodyMedium,
-                                    modifier = Modifier.padding(top = 8.dp),
+                                    modifier = Modifier.padding(top = Spacing.sm),
                                 )
                             }
                         }
                     }
 
-                    Card(
+                    FusionarPdfsCard(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(top = 24.dp),
-                        colors = CardDefaults.cardColors(
-                            containerColor = MaterialTheme.colorScheme.surface,
-                        ),
-                        elevation = CardDefaults.cardElevation(defaultElevation = 1.dp),
+                            .padding(top = Spacing.xl),
                     ) {
-                        Column(modifier = Modifier.padding(16.dp)) {
+                        Column(modifier = Modifier.padding(Spacing.lg)) {
                             Text(
                                 text = mergeResult.fileName,
                                 style = MaterialTheme.typography.titleLarge,
@@ -148,13 +139,13 @@ fun ResultScreen(
                                 text = formatFileSize(mergeResult.fileSizeBytes),
                                 style = MaterialTheme.typography.bodyLarge,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                modifier = Modifier.padding(top = 4.dp),
+                                modifier = Modifier.padding(top = Spacing.xs),
                             )
                             Text(
                                 text = formatMergeDate(mergeResult.createdAt),
                                 style = MaterialTheme.typography.bodyLarge,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                modifier = Modifier.padding(top = 4.dp),
+                                modifier = Modifier.padding(top = Spacing.xs),
                             )
                         }
                     }
@@ -164,12 +155,13 @@ fun ResultScreen(
                         enabled = actionsEnabled,
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(top = 24.dp),
+                            .padding(top = Spacing.xl),
+                        shape = MaterialTheme.shapes.medium,
                     ) {
                         Icon(Icons.AutoMirrored.Filled.OpenInNew, contentDescription = null)
                         Text(
                             text = "Abrir PDF",
-                            modifier = Modifier.padding(start = 8.dp),
+                            modifier = Modifier.padding(start = Spacing.sm),
                         )
                     }
 
@@ -178,12 +170,13 @@ fun ResultScreen(
                         enabled = actionsEnabled,
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(top = 8.dp),
+                            .padding(top = Spacing.sm),
+                        shape = MaterialTheme.shapes.medium,
                     ) {
                         Icon(Icons.Default.Share, contentDescription = null)
                         Text(
                             text = "Compartir",
-                            modifier = Modifier.padding(start = 8.dp),
+                            modifier = Modifier.padding(start = Spacing.sm),
                         )
                     }
 
@@ -195,7 +188,8 @@ fun ResultScreen(
                         },
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(top = 24.dp),
+                            .padding(top = Spacing.xl),
+                        shape = MaterialTheme.shapes.medium,
                     ) {
                         Text("Nueva fusión")
                     }
@@ -204,10 +198,12 @@ fun ResultScreen(
                         onClick = onNavigateToHistory,
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(top = 8.dp),
+                            .padding(top = Spacing.sm),
+                        shape = MaterialTheme.shapes.medium,
                     ) {
                         Text("Ver historial")
                     }
+                }
                 }
             }
         }

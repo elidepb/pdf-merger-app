@@ -4,9 +4,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.PictureAsPdf
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -16,8 +13,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import com.app.fusionarpdfs.core.theme.Spacing
 import com.app.fusionarpdfs.core.utils.formatFileSize
 import com.app.fusionarpdfs.domain.model.PdfFileItem
+import com.app.fusionarpdfs.presentation.common.components.PdfFileIcon
 
 @Composable
 fun PreviewPdfSummaryItem(
@@ -28,7 +27,7 @@ fun PreviewPdfSummaryItem(
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .padding(vertical = 8.dp),
+            .padding(vertical = Spacing.sm),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Surface(
@@ -43,12 +42,7 @@ fun PreviewPdfSummaryItem(
                 modifier = Modifier.padding(horizontal = 10.dp, vertical = 4.dp),
             )
         }
-        Icon(
-            imageVector = Icons.Default.PictureAsPdf,
-            contentDescription = null,
-            tint = MaterialTheme.colorScheme.primary,
-            modifier = Modifier.padding(horizontal = 12.dp),
-        )
+        PdfFileIcon(modifier = Modifier.padding(horizontal = Spacing.md))
         Text(
             text = pdf.name,
             style = MaterialTheme.typography.bodyLarge,
@@ -60,7 +54,7 @@ fun PreviewPdfSummaryItem(
             text = formatFileSize(pdf.sizeBytes),
             style = MaterialTheme.typography.bodyLarge,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
-            modifier = Modifier.padding(start = 8.dp),
+            modifier = Modifier.padding(start = Spacing.sm),
         )
     }
 }
