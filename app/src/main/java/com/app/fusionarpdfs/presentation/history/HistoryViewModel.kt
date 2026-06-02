@@ -3,12 +3,14 @@ package com.app.fusionarpdfs.presentation.history
 import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.app.fusionarpdfs.core.utils.toAccessErrorMessage
 import com.app.fusionarpdfs.domain.model.MergeHistoryItem
 import com.app.fusionarpdfs.domain.repository.MergeHistoryRepository
 import com.app.fusionarpdfs.domain.usecase.ClearHistoryUseCase
 import com.app.fusionarpdfs.domain.usecase.DeleteHistoryItemUseCase
 import com.app.fusionarpdfs.domain.usecase.OpenMergedPdfUseCase
 import com.app.fusionarpdfs.domain.usecase.ShareMergedPdfUseCase
+import com.app.fusionarpdfs.presentation.common.ErrorDialogState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -42,28 +44,42 @@ class HistoryViewModel @Inject constructor(
     }
 
     fun onOpenPdf(item: MergeHistoryItem) {
-        openMergedPdfUseCase(Uri.parse(item.fileUri)).fold(
-            onSuccess = {},
-            onFailure = {
-                _uiState.update {
-                    it.copy(userMessage = "No hay una aplicación disponible para abrir PDFs")
-                }
-            },
-        )
+        viewModelScope.launch {
+            openMergedPdfUseCase(Uri.parse(item.fileUri)).fold(
+                onSuccess = {},
+                onFailure = { error ->
+                    _uiState.update {
+                        it.copy(
+                            errorDialog = ErrorDialogState(
+                                title = "No se pudo abrir",
+                                message = error.toAccessErrorMessage(),
+                            ),
+                        )
+                    }
+                },
+            )
+        }
     }
 
     fun onSharePdf(item: MergeHistoryItem) {
-        shareMergedPdfUseCase(
-            uri = Uri.parse(item.fileUri),
-            fileName = item.fileName,
-        ).fold(
-            onSuccess = {},
-            onFailure = {
-                _uiState.update {
-                    it.copy(userMessage = "No hay una aplicación disponible para compartir")
-                }
-            },
-        )
+        viewModelScope.launch {
+            shareMergedPdfUseCase(
+                uri = Uri.parse(item.fileUri),
+                fileName = item.fileName,
+            ).fold(
+                onSuccess = {},
+                onFailure = { error ->
+                    _uiState.update {
+                        it.copy(
+                            errorDialog = ErrorDialogState(
+                                title = "No se pudo compartir",
+                                message = error.toAccessErrorMessage(),
+                            ),
+                        )
+                    }
+                },
+            )
+        }
     }
 
     fun onDeleteItem(id: String) {
@@ -103,5 +119,9 @@ class HistoryViewModel @Inject constructor(
 
     fun onUserMessageShown() {
         _uiState.update { it.copy(userMessage = null) }
+    }
+
+    fun onErrorDialogDismissed() {
+        _uiState.update { it.copy(errorDialog = null) }
     }
 }

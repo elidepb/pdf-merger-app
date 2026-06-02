@@ -1,5 +1,7 @@
 package com.app.fusionarpdfs.presentation.progress
 
+import com.app.fusionarpdfs.presentation.common.ErrorDialogState
+
 data class ProgressUiState(
     val isRunning: Boolean = true,
     val isCancelling: Boolean = false,
@@ -9,5 +11,5 @@ data class ProgressUiState(
     val progressFraction: Float = 0f,
     val statusMessage: String = "Preparando fusión…",
     val completedResultId: String? = null,
-    val errorMessage: String? = null,
+    val errorDialog: ErrorDialogState? = null,
 )

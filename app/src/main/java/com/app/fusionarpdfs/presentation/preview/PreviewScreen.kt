@@ -32,15 +32,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.app.fusionarpdfs.core.utils.formatFileSize
+import com.app.fusionarpdfs.presentation.common.components.AppFeedbackHandler
 import com.app.fusionarpdfs.presentation.pdf.rememberPdfSaveLocationPicker
 import com.app.fusionarpdfs.presentation.preview.components.PreviewPdfSummaryItem
-import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -51,7 +50,6 @@ fun PreviewScreen(
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val snackbarHostState = remember { SnackbarHostState() }
-    val scope = rememberCoroutineScope()
 
     val saveLocationPicker = rememberPdfSaveLocationPicker { uri ->
         viewModel.onOutputLocationSelected(uri)
@@ -62,6 +60,15 @@ fun PreviewScreen(
             onNavigateBack()
         }
     }
+
+    AppFeedbackHandler(
+        snackbarHostState = snackbarHostState,
+        snackbarMessage = null,
+        onSnackbarShown = {},
+        errorDialog = uiState.errorDialog,
+        onErrorDialogDismiss = viewModel::onErrorDialogDismissed,
+        onErrorDialogAction = { _ -> },
+    )
 
     if (uiState.showMergeConfirmation) {
         AlertDialog(
@@ -78,12 +85,8 @@ fun PreviewScreen(
                     onClick = {
                         when (val action = viewModel.onConfirmMerge()) {
                             PreviewMergeAction.NavigateToProgress -> onNavigateToProgress()
-                            is PreviewMergeAction.ShowMessage -> {
-                                scope.launch {
-                                    snackbarHostState.showSnackbar(action.message)
-                                }
-                            }
                             PreviewMergeAction.None -> Unit
+                            is PreviewMergeAction.ShowMessage -> Unit
                         }
                     },
                 ) {
@@ -116,12 +119,8 @@ fun PreviewScreen(
                     onClick = {
                         when (val action = viewModel.onMergeClick()) {
                             PreviewMergeAction.NavigateToProgress -> onNavigateToProgress()
-                            is PreviewMergeAction.ShowMessage -> {
-                                scope.launch {
-                                    snackbarHostState.showSnackbar(action.message)
-                                }
-                            }
                             PreviewMergeAction.None -> Unit
+                            is PreviewMergeAction.ShowMessage -> Unit
                         }
                     },
                     modifier = Modifier

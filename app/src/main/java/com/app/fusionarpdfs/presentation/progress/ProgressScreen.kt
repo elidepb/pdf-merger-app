@@ -27,6 +27,8 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.app.fusionarpdfs.presentation.common.ErrorDialogAction
+import com.app.fusionarpdfs.presentation.common.components.AppFeedbackHandler
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -48,13 +50,20 @@ fun ProgressScreen(
         }
     }
 
-    LaunchedEffect(uiState.errorMessage) {
-        uiState.errorMessage?.let { message ->
-            snackbarHostState.showSnackbar(message)
-            viewModel.onErrorShown()
-            onNavigateBack()
-        }
-    }
+    AppFeedbackHandler(
+        snackbarHostState = snackbarHostState,
+        snackbarMessage = null,
+        onSnackbarShown = {},
+        errorDialog = uiState.errorDialog,
+        onErrorDialogDismiss = viewModel::onErrorDialogDismissed,
+        onErrorDialogAction = { action ->
+            when (action) {
+                ErrorDialogAction.Retry -> viewModel.startMerge()
+                ErrorDialogAction.NavigateBack -> onNavigateBack()
+                else -> Unit
+            }
+        },
+    )
 
     Scaffold(
         topBar = {

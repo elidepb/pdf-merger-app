@@ -2,8 +2,8 @@ package com.app.fusionarpdfs.presentation.reorder
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.app.fusionarpdfs.core.utils.toUserMessage
 import com.app.fusionarpdfs.domain.model.PdfSelectionValidation
-import com.app.fusionarpdfs.domain.model.ValidationError
 import com.app.fusionarpdfs.domain.repository.MergeSessionRepository
 import com.app.fusionarpdfs.domain.usecase.RemoveSelectedPdfUseCase
 import com.app.fusionarpdfs.domain.usecase.UpdatePdfOrderUseCase
@@ -57,12 +57,5 @@ class ReorderViewModel @Inject constructor(
                 validation.error.toUserMessage(),
             )
         }
-    }
-}
-
-private fun ValidationError.toUserMessage(): String {
-    return when (this) {
-        ValidationError.TOO_FEW_FILES -> "Selecciona al menos 2 PDFs para continuar"
-        ValidationError.DUPLICATE_FILES -> "Hay archivos duplicados en la selección"
     }
 }

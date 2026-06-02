@@ -1,6 +1,7 @@
 package com.app.fusionarpdfs.presentation.result;
 
 import androidx.lifecycle.SavedStateHandle;
+import com.app.fusionarpdfs.domain.repository.PdfFileRepository;
 import com.app.fusionarpdfs.domain.usecase.GetMergeResultUseCase;
 import com.app.fusionarpdfs.domain.usecase.OpenMergedPdfUseCase;
 import com.app.fusionarpdfs.domain.usecase.ShareMergedPdfUseCase;
@@ -32,6 +33,8 @@ public final class ResultViewModel_Factory implements Factory<ResultViewModel> {
 
   private final Provider<GetMergeResultUseCase> getMergeResultUseCaseProvider;
 
+  private final Provider<PdfFileRepository> pdfFileRepositoryProvider;
+
   private final Provider<OpenMergedPdfUseCase> openMergedPdfUseCaseProvider;
 
   private final Provider<ShareMergedPdfUseCase> shareMergedPdfUseCaseProvider;
@@ -40,11 +43,13 @@ public final class ResultViewModel_Factory implements Factory<ResultViewModel> {
 
   public ResultViewModel_Factory(Provider<SavedStateHandle> savedStateHandleProvider,
       Provider<GetMergeResultUseCase> getMergeResultUseCaseProvider,
+      Provider<PdfFileRepository> pdfFileRepositoryProvider,
       Provider<OpenMergedPdfUseCase> openMergedPdfUseCaseProvider,
       Provider<ShareMergedPdfUseCase> shareMergedPdfUseCaseProvider,
       Provider<StartNewMergeUseCase> startNewMergeUseCaseProvider) {
     this.savedStateHandleProvider = savedStateHandleProvider;
     this.getMergeResultUseCaseProvider = getMergeResultUseCaseProvider;
+    this.pdfFileRepositoryProvider = pdfFileRepositoryProvider;
     this.openMergedPdfUseCaseProvider = openMergedPdfUseCaseProvider;
     this.shareMergedPdfUseCaseProvider = shareMergedPdfUseCaseProvider;
     this.startNewMergeUseCaseProvider = startNewMergeUseCaseProvider;
@@ -52,20 +57,22 @@ public final class ResultViewModel_Factory implements Factory<ResultViewModel> {
 
   @Override
   public ResultViewModel get() {
-    return newInstance(savedStateHandleProvider.get(), getMergeResultUseCaseProvider.get(), openMergedPdfUseCaseProvider.get(), shareMergedPdfUseCaseProvider.get(), startNewMergeUseCaseProvider.get());
+    return newInstance(savedStateHandleProvider.get(), getMergeResultUseCaseProvider.get(), pdfFileRepositoryProvider.get(), openMergedPdfUseCaseProvider.get(), shareMergedPdfUseCaseProvider.get(), startNewMergeUseCaseProvider.get());
   }
 
   public static ResultViewModel_Factory create(Provider<SavedStateHandle> savedStateHandleProvider,
       Provider<GetMergeResultUseCase> getMergeResultUseCaseProvider,
+      Provider<PdfFileRepository> pdfFileRepositoryProvider,
       Provider<OpenMergedPdfUseCase> openMergedPdfUseCaseProvider,
       Provider<ShareMergedPdfUseCase> shareMergedPdfUseCaseProvider,
       Provider<StartNewMergeUseCase> startNewMergeUseCaseProvider) {
-    return new ResultViewModel_Factory(savedStateHandleProvider, getMergeResultUseCaseProvider, openMergedPdfUseCaseProvider, shareMergedPdfUseCaseProvider, startNewMergeUseCaseProvider);
+    return new ResultViewModel_Factory(savedStateHandleProvider, getMergeResultUseCaseProvider, pdfFileRepositoryProvider, openMergedPdfUseCaseProvider, shareMergedPdfUseCaseProvider, startNewMergeUseCaseProvider);
   }
 
   public static ResultViewModel newInstance(SavedStateHandle savedStateHandle,
-      GetMergeResultUseCase getMergeResultUseCase, OpenMergedPdfUseCase openMergedPdfUseCase,
-      ShareMergedPdfUseCase shareMergedPdfUseCase, StartNewMergeUseCase startNewMergeUseCase) {
-    return new ResultViewModel(savedStateHandle, getMergeResultUseCase, openMergedPdfUseCase, shareMergedPdfUseCase, startNewMergeUseCase);
+      GetMergeResultUseCase getMergeResultUseCase, PdfFileRepository pdfFileRepository,
+      OpenMergedPdfUseCase openMergedPdfUseCase, ShareMergedPdfUseCase shareMergedPdfUseCase,
+      StartNewMergeUseCase startNewMergeUseCase) {
+    return new ResultViewModel(savedStateHandle, getMergeResultUseCase, pdfFileRepository, openMergedPdfUseCase, shareMergedPdfUseCase, startNewMergeUseCase);
   }
 }

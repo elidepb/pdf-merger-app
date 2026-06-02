@@ -2,12 +2,14 @@ package com.app.fusionarpdfs;
 
 import com.app.fusionarpdfs.di.AppModule;
 import com.app.fusionarpdfs.di.RepositoryModule;
+import com.app.fusionarpdfs.presentation.AppViewModel_HiltModules;
 import com.app.fusionarpdfs.presentation.history.HistoryViewModel_HiltModules;
 import com.app.fusionarpdfs.presentation.home.HomeViewModel_HiltModules;
 import com.app.fusionarpdfs.presentation.preview.PreviewViewModel_HiltModules;
 import com.app.fusionarpdfs.presentation.progress.ProgressViewModel_HiltModules;
 import com.app.fusionarpdfs.presentation.reorder.ReorderViewModel_HiltModules;
 import com.app.fusionarpdfs.presentation.result.ResultViewModel_HiltModules;
+import com.app.fusionarpdfs.presentation.settings.SettingsViewModel_HiltModules;
 import dagger.Binds;
 import dagger.Component;
 import dagger.Module;
@@ -160,6 +162,7 @@ public final class FusionarPdfsApplication_HiltComponents {
 
   @Subcomponent(
       modules = {
+          AppViewModel_HiltModules.KeyModule.class,
           ActivityCBuilderModule.class,
           ViewModelCBuilderModule.class,
           HiltWrapper_ActivityRetainedComponentManager_LifecycleModule.class,
@@ -169,7 +172,8 @@ public final class FusionarPdfsApplication_HiltComponents {
           PreviewViewModel_HiltModules.KeyModule.class,
           ProgressViewModel_HiltModules.KeyModule.class,
           ReorderViewModel_HiltModules.KeyModule.class,
-          ResultViewModel_HiltModules.KeyModule.class
+          ResultViewModel_HiltModules.KeyModule.class,
+          SettingsViewModel_HiltModules.KeyModule.class
       }
   )
   @ActivityRetainedScoped
@@ -205,13 +209,15 @@ public final class FusionarPdfsApplication_HiltComponents {
 
   @Subcomponent(
       modules = {
+          AppViewModel_HiltModules.BindsModule.class,
           HiltWrapper_HiltViewModelFactory_ViewModelModule.class,
           HistoryViewModel_HiltModules.BindsModule.class,
           HomeViewModel_HiltModules.BindsModule.class,
           PreviewViewModel_HiltModules.BindsModule.class,
           ProgressViewModel_HiltModules.BindsModule.class,
           ReorderViewModel_HiltModules.BindsModule.class,
-          ResultViewModel_HiltModules.BindsModule.class
+          ResultViewModel_HiltModules.BindsModule.class,
+          SettingsViewModel_HiltModules.BindsModule.class
       }
   )
   @ViewModelScoped

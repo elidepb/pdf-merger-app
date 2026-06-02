@@ -9,6 +9,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.automirrored.filled.OpenInNew
 import androidx.compose.material.icons.filled.Share
+import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -23,7 +24,6 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -35,6 +35,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.app.fusionarpdfs.core.utils.formatFileSize
 import com.app.fusionarpdfs.core.utils.formatMergeDate
+import com.app.fusionarpdfs.presentation.common.ErrorDialogAction
+import com.app.fusionarpdfs.presentation.common.components.AppFeedbackHandler
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -46,20 +48,18 @@ fun ResultScreen(
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val snackbarHostState = remember { SnackbarHostState() }
 
-    LaunchedEffect(uiState.userMessage) {
-        uiState.userMessage?.let { message ->
-            snackbarHostState.showSnackbar(message)
-            viewModel.onUserMessageShown()
-        }
-    }
-
-    LaunchedEffect(uiState.errorMessage) {
-        uiState.errorMessage?.let { message ->
-            snackbarHostState.showSnackbar(message)
-            viewModel.onErrorShown()
-            onNavigateToHome()
-        }
-    }
+    AppFeedbackHandler(
+        snackbarHostState = snackbarHostState,
+        snackbarMessage = uiState.userMessage,
+        onSnackbarShown = viewModel::onUserMessageShown,
+        errorDialog = uiState.errorDialog,
+        onErrorDialogDismiss = viewModel::onErrorDialogDismissed,
+        onErrorDialogAction = { action ->
+            if (action == ErrorDialogAction.NavigateHome) {
+                onNavigateToHome()
+            }
+        },
+    )
 
     Scaffold(
         topBar = {
@@ -82,6 +82,7 @@ fun ResultScreen(
 
             uiState.mergeResult != null -> {
                 val mergeResult = uiState.mergeResult!!
+                val actionsEnabled = uiState.isFileAccessible
 
                 Column(
                     modifier = Modifier
@@ -102,6 +103,30 @@ fun ResultScreen(
                         textAlign = TextAlign.Center,
                         modifier = Modifier.padding(top = 16.dp),
                     )
+
+                    if (!actionsEnabled) {
+                        Card(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(top = 16.dp),
+                            colors = CardDefaults.cardColors(
+                                containerColor = MaterialTheme.colorScheme.errorContainer.copy(alpha = 0.35f),
+                            ),
+                        ) {
+                            Column(modifier = Modifier.padding(16.dp)) {
+                                Icon(
+                                    imageVector = Icons.Default.Warning,
+                                    contentDescription = null,
+                                    tint = MaterialTheme.colorScheme.error,
+                                )
+                                Text(
+                                    text = "El archivo ya no está accesible en su ubicación original.",
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    modifier = Modifier.padding(top = 8.dp),
+                                )
+                            }
+                        }
+                    }
 
                     Card(
                         modifier = Modifier
@@ -136,6 +161,7 @@ fun ResultScreen(
 
                     Button(
                         onClick = viewModel::onOpenPdf,
+                        enabled = actionsEnabled,
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(top = 24.dp),
@@ -149,6 +175,7 @@ fun ResultScreen(
 
                     OutlinedButton(
                         onClick = viewModel::onSharePdf,
+                        enabled = actionsEnabled,
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(top = 8.dp),

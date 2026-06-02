@@ -2,12 +2,16 @@ package com.app.fusionarpdfs.presentation.progress
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.app.fusionarpdfs.core.utils.dialogTitle
+import com.app.fusionarpdfs.core.utils.isRetryable
 import com.app.fusionarpdfs.core.utils.toUserMessage
 import com.app.fusionarpdfs.domain.model.MergeError
 import com.app.fusionarpdfs.domain.model.MergeException
 import com.app.fusionarpdfs.domain.repository.MergeSessionRepository
 import com.app.fusionarpdfs.domain.usecase.ExecuteMergeFromSessionUseCase
 import com.app.fusionarpdfs.domain.usecase.SaveHistoryUseCase
+import com.app.fusionarpdfs.presentation.common.ErrorDialogAction
+import com.app.fusionarpdfs.presentation.common.ErrorDialogState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.CancellationException
@@ -110,8 +114,8 @@ class ProgressViewModel @Inject constructor(
         mergeJob?.cancel()
     }
 
-    fun onErrorShown() {
-        _uiState.update { it.copy(errorMessage = null) }
+    fun onErrorDialogDismissed() {
+        _uiState.update { it.copy(errorDialog = null) }
     }
 
     fun onNavigationHandled() {
@@ -119,17 +123,26 @@ class ProgressViewModel @Inject constructor(
     }
 
     private fun handleFailure(throwable: Throwable) {
-        val message = when (throwable) {
-            is CancellationException -> MergeError.CANCELLED.toUserMessage()
-            is MergeException -> throwable.error.toUserMessage()
-            else -> MergeError.UNKNOWN.toUserMessage()
+        val mergeError = when (throwable) {
+            is CancellationException -> MergeError.CANCELLED
+            is MergeException -> throwable.error
+            else -> MergeError.UNKNOWN
         }
+
+        val retryable = mergeError.isRetryable()
 
         _uiState.update {
             it.copy(
                 isRunning = false,
                 isCancelling = false,
-                errorMessage = message,
+                errorDialog = ErrorDialogState(
+                    title = mergeError.dialogTitle(),
+                    message = mergeError.toUserMessage(),
+                    confirmText = if (retryable) "Reintentar" else "Volver",
+                    dismissText = if (retryable) "Volver" else null,
+                    confirmAction = if (retryable) ErrorDialogAction.Retry else ErrorDialogAction.NavigateBack,
+                    dismissAction = if (retryable) ErrorDialogAction.NavigateBack else null,
+                ),
             )
         }
     }
